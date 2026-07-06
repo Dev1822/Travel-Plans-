@@ -109,6 +109,42 @@ export const setLoading = () => {
   };
 };
 
+// Upload trip photos
+export const uploadTripPhotos = (id, formData) => async (dispatch) => {
+  try {
+    const res = await api.post(`/trips/${id}/photos`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    dispatch({
+      type: UPDATE_TRIP,
+      payload: res.data,
+    });
+    toast.success("Photos uploaded successfully! 📸");
+  } catch (err) {
+    const msg = err.response?.data?.msg || "Error uploading photos";
+    toast.error(msg);
+  }
+};
+
+// Delete trip photo
+export const deleteTripPhoto = (id, photoUrl) => async (dispatch) => {
+  try {
+    const res = await api.delete(`/trips/${id}/photos`, {
+      data: { photoUrl },
+    });
+    dispatch({
+      type: UPDATE_TRIP,
+      payload: res.data,
+    });
+    toast.success("Photo deleted 🗑️");
+  } catch (err) {
+    const msg = err.response?.data?.msg || "Error deleting photo";
+    toast.error(msg);
+  }
+};
+
 // Generate shareable link
 export const shareTrip = (id) => async () => {
   try {

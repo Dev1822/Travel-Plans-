@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const tripController = require("../controllers/tripController");
 const auth = require("../middleware/auth");
+const { upload } = require("../config/cloudinary");
 
 // @route   POST api/trips
 // @desc    Create a new trip
@@ -37,5 +38,20 @@ router.delete("/:id", auth, tripController.deleteTrip);
 // @desc    Generate shareable link
 // @access  Private
 router.post("/:id/share", auth, tripController.shareTrip);
+
+// @route   POST api/trips/:id/photos
+// @desc    Upload photos for a trip
+// @access  Private
+router.post(
+  "/:id/photos",
+  auth,
+  upload.array("photos", 10),
+  tripController.uploadTripPhotos,
+);
+
+// @route   DELETE api/trips/:id/photos
+// @desc    Delete a photo from a trip
+// @access  Private
+router.delete("/:id/photos", auth, tripController.deleteTripPhoto);
 
 module.exports = router;

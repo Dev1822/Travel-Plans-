@@ -190,3 +190,45 @@ exports.getSharedTrip = async (req, res) => {
     res.status(500).send("Server error");
   }
 };
+
+// Upload photos to trip
+exports.uploadTripPhotos = async (req, res) => {
+  try {
+    const trip = await Trip.findById(req.params.id);
+    if (!trip) return res.status(404).json({ msg: "Trip not found" });
+    if (trip.user.toString() !== req.user.id)
+      return res.status(401).json({ msg: "User not authorized" });
+
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ msg: "No files uploaded" });
+    }
+
+    const fileUrls = req.files.map((file) => file.path);
+    trip.uploadedImages.push(...fileUrls);
+    await trip.save();
+
+    res.json(trip);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+};
+
+// Delete photo from trip
+exports.deleteTripPhoto = async (req, res) => {
+  try {
+    const { photoUrl } = req.body;
+    const trip = await Trip.findById(req.params.id);
+    if (!trip) return res.status(404).json({ msg: "Trip not found" });
+    if (trip.user.toString() !== req.user.id)
+      return res.status(401).json({ msg: "User not authorized" });
+
+    trip.uploadedImages = trip.uploadedImages.filter((url) => url !== photoUrl);
+    await trip.save();
+
+    res.json(trip);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+};
