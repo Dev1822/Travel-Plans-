@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
 import { useAuth } from "../../context/AuthContext";
 import { getErrorMessage } from "../../services/api/client";
 import FormField from "../../components/FormField";
 import Button from "../../components/Button";
-import { User, Mail, Lock, AlertCircle, CheckCircle } from "lucide-react";
+import { User, Mail, Lock, AlertCircle } from "lucide-react";
 
 export const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -15,7 +16,7 @@ export const RegisterPage = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const { register } = useAuth();
+  const { register, googleLogin } = useAuth();
   const navigate = useNavigate();
 
   const validatePassword = (pass) => {
@@ -69,6 +70,30 @@ export const RegisterPage = () => {
     }
   };
 
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setError("");
+    if (!credentialResponse?.credential) {
+      setError("Google authentication was unsuccessful.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await googleLogin(credentialResponse.credential);
+      navigate("/my-journey", { replace: true });
+    } catch (err) {
+      setError(
+        getErrorMessage(err, "Google sign in failed. Please try again."),
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    setError("Google sign in was aborted or failed.");
+  };
+
   return (
     <div className="min-h-screen bg-[#FCF9F8] flex flex-col justify-center py-24 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
@@ -89,13 +114,34 @@ export const RegisterPage = () => {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
-        <div className="bg-[#FFFFFF] py-8 px-6 sm:px-10 border border-[#DAC2B6] rounded-md shadow-sm">
+        <div className="bg-[#FFFFFF] py-8 px-6 sm:px-10 border border-[#DAC2B6] rounded-md shadow-sm space-y-6">
           {error && (
-            <div className="mb-6 p-4 rounded bg-[#FFDAD6]/40 border border-[#BA1A1A]/30 flex items-start space-x-3 text-xs text-[#BA1A1A]">
+            <div className="p-4 rounded bg-[#FFDAD6]/40 border border-[#BA1A1A]/30 flex items-start space-x-3 text-xs text-[#BA1A1A]">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
           )}
+
+          {/* Google Sign-In */}
+          <div className="flex justify-center w-full">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              theme="outline"
+              size="large"
+              shape="rectangular"
+              text="signup_with"
+              width="100%"
+            />
+          </div>
+
+          <div className="relative flex items-center justify-center">
+            <div className="border-t border-[#E5E2E1] w-full" />
+            <span className="bg-[#FFFFFF] px-3 text-[11px] text-[#877369] uppercase font-semibold">
+              or sign up with email
+            </span>
+            <div className="border-t border-[#E5E2E1] w-full" />
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <FormField
@@ -162,7 +208,7 @@ export const RegisterPage = () => {
             </Button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-[#E5E2E1] text-center">
+          <div className="pt-4 border-t border-[#E5E2E1] text-center">
             <p className="text-xs text-[#54433A]">
               Already have an account?{" "}
               <Link

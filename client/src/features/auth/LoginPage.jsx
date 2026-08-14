@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
 import { useAuth } from "../../context/AuthContext";
 import { getErrorMessage } from "../../services/api/client";
 import FormField from "../../components/FormField";
 import Button from "../../components/Button";
-import { Lock, Mail, AlertCircle, Sparkles } from "lucide-react";
+import { Lock, Mail, AlertCircle } from "lucide-react";
 
 export const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const { login } = useAuth();
+  const { login, googleLogin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -42,6 +43,30 @@ export const LoginPage = () => {
     }
   };
 
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setError("");
+    if (!credentialResponse?.credential) {
+      setError("Google sign in was unsuccessful.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await googleLogin(credentialResponse.credential);
+      navigate(from, { replace: true });
+    } catch (err) {
+      setError(
+        getErrorMessage(err, "Google sign in failed. Please try again."),
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    setError("Google authentication was aborted or failed.");
+  };
+
   return (
     <div className="min-h-screen bg-[#FCF9F8] flex flex-col justify-center py-24 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
@@ -62,15 +87,36 @@ export const LoginPage = () => {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
-        <div className="bg-[#FFFFFF] py-8 px-6 sm:px-10 border border-[#DAC2B6] rounded-md shadow-sm">
+        <div className="bg-[#FFFFFF] py-8 px-6 sm:px-10 border border-[#DAC2B6] rounded-md shadow-sm space-y-6">
           {error && (
-            <div className="mb-6 p-4 rounded bg-[#FFDAD6]/40 border border-[#BA1A1A]/30 flex items-start space-x-3 text-xs text-[#BA1A1A]">
+            <div className="p-4 rounded bg-[#FFDAD6]/40 border border-[#BA1A1A]/30 flex items-start space-x-3 text-xs text-[#BA1A1A]">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Google Sign-In */}
+          <div className="flex justify-center w-full">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              theme="outline"
+              size="large"
+              shape="rectangular"
+              text="signin_with"
+              width="100%"
+            />
+          </div>
+
+          <div className="relative flex items-center justify-center">
+            <div className="border-t border-[#E5E2E1] w-full" />
+            <span className="bg-[#FFFFFF] px-3 text-[11px] text-[#877369] uppercase font-semibold">
+              or continue with email
+            </span>
+            <div className="border-t border-[#E5E2E1] w-full" />
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
             <FormField
               label="Email Address"
               name="email"
@@ -116,7 +162,7 @@ export const LoginPage = () => {
             </Button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-[#E5E2E1] text-center">
+          <div className="pt-4 border-t border-[#E5E2E1] text-center">
             <p className="text-xs text-[#54433A]">
               Don't have an account yet?{" "}
               <Link
