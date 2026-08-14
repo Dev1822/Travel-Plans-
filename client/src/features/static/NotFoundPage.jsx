@@ -1,43 +1,50 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Button from "../../components/Button";
-import { Compass, Home, ArrowLeft } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export const NotFoundPage = () => {
   return (
-    <div className="min-h-screen bg-[#FCF9F8] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-24">
-      <div className="max-w-xl w-full text-center">
-        {/* Soft icon container */}
-        <div className="w-20 h-20 rounded-full bg-[#FFDBC9]/60 text-[#6C2F00] flex items-center justify-center mx-auto mb-8">
-          <Compass className="w-10 h-10 animate-pulse" />
+    <div className="bg-[#FCF9F8] text-[#1C1B1B] min-h-screen flex items-center pt-28 pb-20">
+      <div className="max-w-7xl mx-auto w-full px-4 sm:px-8 lg:px-16 grid grid-cols-1 md:grid-cols-12 gap-12 items-center min-h-[65vh]">
+        {/* Left: Editorial Text Content */}
+        <div className="md:col-span-5 flex flex-col justify-center order-2 md:order-1 z-10">
+          <div className="w-12 h-[2px] bg-[#DAC2B6] mb-8" />
+          <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#6C2F00] block mb-3">
+            404 · PAGE NOT FOUND
+          </span>
+          <h1 className="font-serif text-4xl sm:text-6xl font-bold text-[#1C1B1B] mb-6 leading-tight">
+            Looks like you took a wrong turn.
+          </h1>
+          <p className="text-base sm:text-lg text-[#54433A] mb-10 max-w-md leading-relaxed">
+            The destination you're looking for isn't here. Let's get you back on
+            the journey and find somewhere extraordinary.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Link
+              to="/explore"
+              className="bg-[#6C2F00] text-white px-8 py-4 rounded text-xs font-semibold uppercase tracking-widest text-center hover:bg-[#8B4513] transition-colors duration-300 flex items-center justify-center gap-2 group"
+            >
+              <span>Explore Destinations</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              to="/"
+              className="border border-[#DAC2B6] text-[#1C1B1B] px-8 py-4 rounded text-xs font-semibold uppercase tracking-widest text-center hover:bg-[#F6F3F2] transition-colors duration-300"
+            >
+              Go Home
+            </Link>
+          </div>
         </div>
 
-        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#6C2F00] block mb-2">
-          404 · Trail Not Found
-        </span>
-
-        <h1 className="font-serif text-5xl sm:text-6xl font-bold text-[#1C1B1B] mb-4">
-          Wandering Off the Map
-        </h1>
-
-        <p className="text-sm sm:text-base text-[#54433A] font-sans leading-relaxed mb-10 max-w-md mx-auto">
-          The page or landmark you are looking for has either shifted like
-          desert sands or was not charted on our journey map.
-        </p>
-
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link to="/">
-            <Button variant="primary" size="md" className="w-full sm:w-auto">
-              <Home className="w-4 h-4 mr-2" />
-              Return to Sanctuary
-            </Button>
-          </Link>
-
-          <Link to="/explore">
-            <Button variant="outline" size="md" className="w-full sm:w-auto">
-              Explore Destinations
-            </Button>
-          </Link>
+        {/* Right: Cinematic Desert Dawn Image */}
+        <div className="md:col-span-7 h-[45vh] md:h-[70vh] w-full relative rounded overflow-hidden order-1 md:order-2 group shadow-sm">
+          <img
+            alt="A cinematic view of a dusty path disappearing into a vast, misty desert landscape at dawn"
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzZ6PA6MqsP9nelM3-1Ip2HK3o9Jf7xk8PbH3-aMl8GVh0gSHD6AfG1izshHpY-wnIQ403BFPsFeIDH2EBu-FHQXhUnoaedo2YDllda0RFrmOn2YY73DK-5wO6vt4vOHY7v4yqnwga7uWiMV57oikaxEI7St_G7Lm-kHrVdT7ToefB_yG-qbvpvyHv98BUhydnFRu2H1lU8To3f68KBARKtHbxm12qmWlQzMn40igncomV7sELrPBxoQ"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1C1B1B]/30 via-transparent to-transparent pointer-events-none" />
         </div>
       </div>
     </div>

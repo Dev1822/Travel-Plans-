@@ -3,9 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { useAuth } from "../../context/AuthContext";
 import { getErrorMessage } from "../../services/api/client";
-import FormField from "../../components/FormField";
-import Button from "../../components/Button";
-import { User, Mail, Lock, AlertCircle } from "lucide-react";
+import { ArrowRight, AlertCircle, MapPin } from "lucide-react";
 
 export const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -45,7 +43,7 @@ export const RegisterPage = () => {
 
     if (!validatePassword(password)) {
       setError(
-        "Password must be at least 8 characters and include 1 uppercase, 1 lowercase, 1 number, and 1 special symbol.",
+        "Password must be at least 8 characters with 1 uppercase, 1 lowercase, 1 number, and 1 special character.",
       );
       return;
     }
@@ -59,7 +57,7 @@ export const RegisterPage = () => {
     try {
       const res = await register(name.trim(), email.trim(), password);
       navigate("/check-email", {
-        state: { email: email.trim(), message: res.msg },
+        state: { email: email.trim(), message: res?.msg },
       });
     } catch (err) {
       setError(
@@ -95,34 +93,158 @@ export const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FCF9F8] flex flex-col justify-center py-24 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <Link to="/" className="inline-flex items-center space-x-2 mb-6">
-          <div className="w-8 h-8 rounded bg-[#1C1B1B] text-[#FCF9F8] flex items-center justify-center font-serif text-lg font-bold">
-            P
+    <div className="bg-[#FCF9F8] text-[#1C1B1B] min-h-screen flex flex-col md:flex-row antialiased selection:bg-[#FFDBC9] selection:text-[#321200] pt-16 md:pt-0">
+      {/* ── Left Split: Cinematic Amber Fort Golden Hour (Desktop Only) ── */}
+      <div className="hidden md:flex w-1/2 relative bg-[#E5E2E1] overflow-hidden group min-h-screen">
+        <div
+          className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105"
+          style={{
+            backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuBnfFcrlQFDU57fX6MVvRgStusuqLQvJhMBSzCxEaelSizZ0zKkIYUVT-mZ3ZRbzpxbvRFCILB3qz9Q7LH3l5V2C3IYZpj0pymHR-wH9cgmUn-PpjARnG8IZBGxX1NoKs0mZGF7kyC4wckOYxNzuS3gPhyx6jSLb1bwrC0Wdnquf4MjmH2eW6m3POuKEJanXCeCc5QGFT2Oudu3Sr8wlWLUhIEY8dE3wR10WwqkqJn_-fYiCOo0w3ybFA')`,
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
+        <div className="absolute bottom-16 left-16 text-white flex flex-col gap-2 z-10 max-w-md">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#FFB68C]">
+            Featured Destination
+          </p>
+          <h2 className="font-serif text-4xl lg:text-5xl font-bold">
+            Jaipur, Rajasthan
+          </h2>
+          <div className="flex items-center gap-2 mt-2 opacity-90 text-sm">
+            <MapPin className="w-4 h-4 text-[#FFB68C]" />
+            <span>India</span>
           </div>
-          <span className="font-serif text-2xl font-bold tracking-tight text-[#1C1B1B]">
-            PackGo
-          </span>
-        </Link>
-        <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#1C1B1B]">
-          Begin Your Odyssey
-        </h2>
-        <p className="mt-2 text-xs text-[#54433A] font-sans">
-          Create your account to start planning custom Indian travel journeys.
-        </p>
+        </div>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
-        <div className="bg-[#FFFFFF] py-8 px-6 sm:px-10 border border-[#DAC2B6] rounded-md shadow-sm space-y-6">
+      {/* ── Right Split: Sign Up Form ── */}
+      <div className="w-full md:w-1/2 flex flex-col justify-center px-6 sm:px-12 lg:px-20 py-16 md:py-24 relative bg-[#FCF9F8]">
+        <div className="max-w-md mx-auto w-full flex flex-col gap-8">
+          {/* Header */}
+          <div className="flex flex-col gap-2">
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#6C2F00]">
+              JOIN PACKGO
+            </span>
+            <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#1C1B1B]">
+              Start your journey
+            </h1>
+            <p className="text-sm sm:text-base text-[#54433A]">
+              Create your PackGo account and start planning intentional travels.
+            </p>
+          </div>
+
           {error && (
-            <div className="p-4 rounded bg-[#FFDAD6]/40 border border-[#BA1A1A]/30 flex items-start space-x-3 text-xs text-[#BA1A1A]">
+            <div className="p-4 rounded bg-[#FFDAD6]/60 border border-[#BA1A1A]/30 flex items-start gap-3 text-xs text-[#BA1A1A]">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
           )}
 
-          {/* Google Sign-In */}
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+            <div>
+              <label
+                className="block text-xs font-semibold uppercase tracking-wider text-[#877369] mb-1"
+                htmlFor="name"
+              >
+                Full Name
+              </label>
+              <input
+                id="name"
+                type="text"
+                required
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                placeholder="e.g. Vikramaditya Singh"
+                className="w-full bg-transparent border-0 border-b border-[#DAC2B6] py-3 text-base text-[#1C1B1B] placeholder-[#877369]/50 focus:ring-0 focus:border-[#6C2F00] transition-colors"
+              />
+            </div>
+
+            <div>
+              <label
+                className="block text-xs font-semibold uppercase tracking-wider text-[#877369] mb-1"
+                htmlFor="email"
+              >
+                Email Address
+              </label>
+              <input
+                id="email"
+                type="email"
+                required
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                placeholder="e.g. vikram@example.com"
+                className="w-full bg-transparent border-0 border-b border-[#DAC2B6] py-3 text-base text-[#1C1B1B] placeholder-[#877369]/50 focus:ring-0 focus:border-[#6C2F00] transition-colors"
+              />
+            </div>
+
+            <div>
+              <label
+                className="block text-xs font-semibold uppercase tracking-wider text-[#877369] mb-1"
+                htmlFor="password"
+              >
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                required
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                placeholder="••••••••"
+                className="w-full bg-transparent border-0 border-b border-[#DAC2B6] py-3 text-base text-[#1C1B1B] placeholder-[#877369]/50 focus:ring-0 focus:border-[#6C2F00] transition-colors"
+              />
+              <p className="text-[11px] text-[#877369] mt-1">
+                Min 8 chars, 1 uppercase, 1 lowercase, 1 number & 1 special
+              </p>
+            </div>
+
+            <div>
+              <label
+                className="block text-xs font-semibold uppercase tracking-wider text-[#877369] mb-1"
+                htmlFor="confirmPassword"
+              >
+                Confirm Password
+              </label>
+              <input
+                id="confirmPassword"
+                type="password"
+                required
+                value={formData.confirmPassword}
+                onChange={(e) =>
+                  setFormData({ ...formData, confirmPassword: e.target.value })
+                }
+                placeholder="••••••••"
+                className="w-full bg-transparent border-0 border-b border-[#DAC2B6] py-3 text-base text-[#1C1B1B] placeholder-[#877369]/50 focus:ring-0 focus:border-[#6C2F00] transition-colors"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-[#6C2F00] text-white text-xs font-semibold uppercase tracking-widest py-4 px-8 rounded flex items-center justify-center gap-2 hover:bg-[#8B4513] transition-colors duration-300 shadow-sm disabled:opacity-50 mt-2 cursor-pointer"
+            >
+              <span>{loading ? "Creating Account..." : "Create Account"}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </form>
+
+          {/* Social Divider */}
+          <div className="relative flex items-center py-1">
+            <div className="flex-grow border-t border-[#DAC2B6]/40" />
+            <span className="flex-shrink-0 mx-4 text-xs font-semibold text-[#877369] uppercase tracking-wider">
+              or
+            </span>
+            <div className="flex-grow border-t border-[#DAC2B6]/40" />
+          </div>
+
+          {/* Google Sign In */}
           <div className="flex justify-center w-full">
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
@@ -135,89 +257,15 @@ export const RegisterPage = () => {
             />
           </div>
 
-          <div className="relative flex items-center justify-center">
-            <div className="border-t border-[#E5E2E1] w-full" />
-            <span className="bg-[#FFFFFF] px-3 text-[11px] text-[#877369] uppercase font-semibold">
-              or sign up with email
-            </span>
-            <div className="border-t border-[#E5E2E1] w-full" />
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <FormField
-              label="Full Name"
-              name="name"
-              icon={User}
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              placeholder="e.g. Vikramaditya Singh"
-              helperText="Letters and spaces only (min. 2 characters)"
-              required
-            />
-
-            <FormField
-              label="Email Address"
-              name="email"
-              type="email"
-              icon={Mail}
-              value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-              placeholder="e.g. vikram@example.com"
-              required
-            />
-
-            <FormField
-              label="Password"
-              name="password"
-              type="password"
-              icon={Lock}
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-              placeholder="••••••••"
-              helperText="Min. 8 chars (upper, lower, number, special)"
-              required
-            />
-
-            <FormField
-              label="Confirm Password"
-              name="confirmPassword"
-              type="password"
-              icon={Lock}
-              value={formData.confirmPassword}
-              onChange={(e) =>
-                setFormData({ ...formData, confirmPassword: e.target.value })
-              }
-              placeholder="••••••••"
-              required
-            />
-
-            <Button
-              type="submit"
-              variant="terracotta"
-              size="md"
-              loading={loading}
-              className="w-full mt-4"
+          {/* Footer Link */}
+          <div className="pt-2 text-center text-xs text-[#54433A]">
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              className="font-semibold text-[#6C2F00] hover:underline ml-1"
             >
-              Create Account
-            </Button>
-          </form>
-
-          <div className="pt-4 border-t border-[#E5E2E1] text-center">
-            <p className="text-xs text-[#54433A]">
-              Already have an account?{" "}
-              <Link
-                to="/login"
-                className="font-semibold text-[#6C2F00] hover:underline ml-1"
-              >
-                Log In
-              </Link>
-            </p>
+              Log In
+            </Link>
           </div>
         </div>
       </div>

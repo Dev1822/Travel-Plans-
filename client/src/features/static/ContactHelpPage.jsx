@@ -1,16 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  ChevronDown,
-  ArrowRight,
-  ArrowUpRight,
-  Mail,
-  Send,
-  CheckCircle2,
-} from "lucide-react";
+import { ArrowRight, ChevronDown, CheckCircle } from "lucide-react";
 
 export const ContactHelpPage = () => {
-  const [openFaq, setOpenFaq] = useState(0);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -18,248 +10,270 @@ export const ContactHelpPage = () => {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [openFaq, setOpenFaq] = useState(0);
 
   const faqs = [
     {
-      category: "Getting Started",
-      question: "How do I create a trip?",
-      answer:
-        "Simply navigate to the Explore section, find your desired destination, and click 'Plan This Journey'. Our intuitive itinerary builder will guide you through setting dates, allocating your budget, and choosing points of interest step-by-step.",
+      q: "How do I create a trip?",
+      a: "Simply navigate to the Explore section, find your desired destination, and click 'Start Planning'. Our intuitive builder will guide you through the process step-by-step.",
     },
     {
-      category: "Trips",
-      question: "How do I manage my journey?",
-      answer:
-        "You can access all your upcoming, ongoing, and past journeys in your 'My Journey' dashboard. From there, you can customize daily itineraries, record itemized travel expenses, track packing checklists, view live weather, and generate public sharing links.",
+      q: "How do I manage my journey?",
+      a: "You can access all your upcoming and past journeys in your Account dashboard. From there, you can edit itineraries, add notes, track expenses, and invite travel companions.",
     },
     {
-      category: "Destinations",
-      question: "How do I explore destinations?",
-      answer:
-        "Use our top search bar or browse curated regional collections across North, South, West, East, and Central India. Each destination features traveler dossiers including best seasons to visit, estimated entrance fees, DSLR camera rules, and key historic landmarks.",
+      q: "How do I explore destinations?",
+      a: "Use our search functionality or browse our curated editorial collections. Each destination features comprehensive guides tailored to a slow, immersive travel experience.",
     },
     {
-      category: "Account",
-      question: "How do I update my profile?",
-      answer:
-        "Navigate to 'Profile & Settings' from the user menu to update your traveler name, change your password, or request an email address update protected by 2-factor OTP verification.",
+      q: "How do I update my profile?",
+      a: "Navigate to 'Settings' within your Account menu to update personal details, security preferences, email address, and notification settings.",
+    },
+    {
+      q: "Can I share my journey itinerary with others?",
+      a: "Yes! In your trip overview, click 'Share Journey' to generate a secure, read-only link. Anyone with the link can view your itinerary, places, and packing tips.",
     },
   ];
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) return;
-
-    setLoading(true);
-    setTimeout(() => {
-      setSubmitted(true);
-      setLoading(false);
-      setFormData({ name: "", email: "", subject: "", message: "" });
-      setTimeout(() => setSubmitted(false), 5000);
-    }, 800);
+    setSubmitted(true);
   };
 
   return (
     <div className="bg-[#FCF9F8] text-[#1C1B1B] min-h-screen">
-      {/* ── 1. HERO SECTION (Rajasthan Desert Horizon) ── */}
-      <section className="relative min-h-[58vh] flex items-center px-4 sm:px-8 lg:px-16 pt-32 pb-20 overflow-hidden">
+      {/* ── 1. HERO SECTION ── */}
+      <section className="relative min-h-[50vh] flex items-center px-4 sm:px-8 lg:px-16 pt-32 pb-20 overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-40">
           <img
-            src="https://lh3.googleusercontent.com/aida/AP1WRLtYlGQujR8-Cvy1dlld5Jy7JwKkUsxsuT-dWZeGGYXUc5d4HyHsILmlmxW49X4jvjTj9i1ST-z7Zl20tRanwaLv0_cTKeTkP2xPuuOOCmuBBfXUAZOG6H6BySKvPuk_87mT6fNB7qojgnu1-VM6Ps1hUUQZ6nO2LPjs0sNU6paMFzfT4Cx48rOW04qaGEqAUxid7gcvaOtqFNXnVeCMhR027Lo3KgBogPrChAJBG_Net1_yomF3srbOZMfB"
-            alt="Rajasthan desert road fading into horizon"
+            alt="Scenic Rajasthan landscape"
             className="w-full h-full object-cover"
+            src="https://lh3.googleusercontent.com/aida/AP1WRLtYlGQujR8-Cvy1dlld5Jy7JwKkUsxsuT-dWZeGGYXUc5d4HyHsILmlmxW49X4jvjTj9i1ST-z7Zl20tRanwaLv0_cTKeTkP2xPuuOOCmuBBfXUAZOG6H6BySKvPuk_87mT6fNB7qojgnu1-VM6Ps1hUUQZ6nO2LPjs0sNU6paMFzfT4Cx48rOW04qaGEqAUxid7gcvaOtqFNXnVeCMhR027Lo3KgBogPrChAJBG_Net1_yomF3srbOZMfB"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#FCF9F8] via-[#FCF9F8]/85 to-transparent" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-8">
-          <div className="md:col-span-8 space-y-4">
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#6C2F00] block">
-              Concierge & Guidance
+        <div className="relative z-10 max-w-7xl mx-auto w-full">
+          <div className="max-w-3xl">
+            <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#6C2F00] block mb-3">
+              ASSISTANCE & EDITORIAL CARE
             </span>
-            <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold text-[#6C2F00] leading-tight">
+            <h1 className="font-serif text-4xl sm:text-6xl font-bold text-[#6C2F00] mb-4">
               How can we help?
             </h1>
-            <p className="text-sm sm:text-lg text-[#54433A] max-w-2xl font-normal leading-relaxed">
-              Have a question about PackGo or your journey? We're here to assist
-              you at every step of your expedition.
+            <p className="text-base sm:text-lg text-[#54433A] max-w-2xl leading-relaxed">
+              Have a question about PackGo or your journey? We're here to help
+              you craft an effortless and unforgettable travel experience.
             </p>
           </div>
         </div>
       </section>
 
-      {/* ── 2. MAIN CONTENT (FAQ & Contact Form) ── */}
-      <section className="px-4 sm:px-8 lg:px-16 py-20 sm:py-28 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-24">
-          {/* Left Column: FAQ Accordion */}
-          <div className="md:col-span-6 space-y-10">
-            <div>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#6C2F00] pb-4 border-b border-[#DAC2B6]/40">
-                Help & FAQs
-              </h2>
-            </div>
+      {/* ── 2. MAIN CONTENT (FAQ + Editorial Form) ── */}
+      <section className="px-4 sm:px-8 lg:px-16 py-20 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
+          {/* Left Column: FAQ */}
+          <div className="lg:col-span-6">
+            <h2 className="font-serif text-3xl font-bold text-[#6C2F00] mb-8 border-b border-[#DAC2B6]/40 pb-4">
+              Help
+            </h2>
 
-            <div className="space-y-4 divide-y divide-[#DAC2B6]/30">
-              {faqs.map((faq, idx) => (
-                <div
-                  key={idx}
-                  className="pt-6 first:pt-0 cursor-pointer"
-                  onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                >
-                  <div className="flex justify-between items-center group py-2">
-                    <div>
-                      <span className="text-[10px] font-semibold uppercase tracking-widest text-[#877369] block mb-1">
-                        {faq.category}
-                      </span>
-                      <h3 className="font-serif text-xl font-bold text-[#1C1B1B] group-hover:text-[#6C2F00] transition-colors">
-                        {faq.question}
+            <div className="space-y-1 divide-y divide-[#DAC2B6]/30">
+              {faqs.map((faq, idx) => {
+                const isOpen = openFaq === idx;
+                return (
+                  <div key={idx} className="py-5">
+                    <button
+                      type="button"
+                      onClick={() => setOpenFaq(isOpen ? -1 : idx)}
+                      className="w-full flex justify-between items-center text-left group transition-colors"
+                    >
+                      <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#1C1B1B] group-hover:text-[#6C2F00] transition-colors pr-4">
+                        {faq.q}
                       </h3>
-                    </div>
-                    <ChevronDown
-                      className={`w-5 h-5 text-[#877369] group-hover:text-[#6C2F00] transition-transform duration-300 shrink-0 ml-4 ${
-                        openFaq === idx ? "rotate-180 text-[#6C2F00]" : ""
-                      }`}
-                    />
-                  </div>
+                      <ChevronDown
+                        className={`w-5 h-5 text-[#877369] group-hover:text-[#6C2F00] transition-transform duration-300 shrink-0 ${
+                          isOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
 
-                  {openFaq === idx && (
-                    <div className="pt-3 pb-4 text-xs sm:text-sm text-[#54433A] leading-relaxed">
-                      {faq.answer}
-                    </div>
-                  )}
-                </div>
-              ))}
+                    {isOpen && (
+                      <div className="pt-3 text-sm text-[#54433A] leading-relaxed font-sans animate-fade-in-up">
+                        {faq.a}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
 
-            {/* Direct Email Link */}
-            <div className="pt-10 border-t border-[#DAC2B6]/40 space-y-2">
-              <h4 className="text-[11px] font-semibold text-[#877369] uppercase tracking-widest">
+            {/* Direct Contact */}
+            <div className="mt-16 pt-8 border-t border-[#DAC2B6]/40">
+              <h4 className="text-xs font-semibold text-[#877369] uppercase tracking-widest mb-2">
                 Need direct help with your journey?
               </h4>
               <a
-                href="mailto:support@packgo.com"
                 className="font-serif text-2xl sm:text-3xl font-bold text-[#6C2F00] hover:text-[#8B4513] transition-colors inline-flex items-center gap-2"
+                href="mailto:support@packgo.com"
               >
-                <span>support@packgo.com</span>
-                <ArrowUpRight className="w-6 h-6" />
+                support@packgo.com
+                <ArrowRight className="w-5 h-5 -rotate-45" />
               </a>
             </div>
           </div>
 
-          {/* Right Column: Send Us A Message Form */}
-          <div className="md:col-span-6">
-            <div className="sticky top-28 bg-[#FFFFFF] p-8 sm:p-10 border border-[#DAC2B6]/50 rounded-md shadow-xs space-y-8">
-              <div>
-                <h2 className="font-serif text-3xl font-bold text-[#6C2F00] pb-4 border-b border-[#DAC2B6]/40">
-                  Send us a message
-                </h2>
-                <p className="text-xs text-[#54433A] mt-2">
-                  Drop us an inquiry and our travel curation team will get back
-                  to you within 24 hours.
-                </p>
-              </div>
+          {/* Right Column: Editorial Contact Form */}
+          <div className="lg:col-span-6 relative">
+            <div className="lg:sticky lg:top-32 bg-white/60 p-6 sm:p-10 rounded border border-[#DAC2B6]/30 shadow-xs">
+              <h2 className="font-serif text-3xl font-bold text-[#6C2F00] mb-8 border-b border-[#DAC2B6]/40 pb-4">
+                Send us a message
+              </h2>
 
-              {submitted && (
-                <div className="p-4 bg-[#CDEACE]/50 border border-[#2E4632]/20 rounded text-xs text-[#2E4632] flex items-center space-x-2">
-                  <CheckCircle2 className="w-4 h-4 shrink-0" />
-                  <span>Thank you! Your inquiry has been received.</span>
-                </div>
-              )}
-
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-widest text-[#877369] mb-1">
-                    Your Name *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
-                    placeholder="e.g. Vikramaditya Singh"
-                    className="w-full bg-transparent border-b border-[#DAC2B6] focus:border-[#6C2F00] py-2 text-sm text-[#1C1B1B] placeholder-[#877369]/70 focus:outline-none transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-widest text-[#877369] mb-1">
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
-                    placeholder="e.g. vikram@example.com"
-                    className="w-full bg-transparent border-b border-[#DAC2B6] focus:border-[#6C2F00] py-2 text-sm text-[#1C1B1B] placeholder-[#877369]/70 focus:outline-none transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-widest text-[#877369] mb-1">
-                    Subject
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.subject}
-                    onChange={(e) =>
-                      setFormData({ ...formData, subject: e.target.value })
-                    }
-                    placeholder="e.g. Question regarding Udaipur heritage pass"
-                    className="w-full bg-transparent border-b border-[#DAC2B6] focus:border-[#6C2F00] py-2 text-sm text-[#1C1B1B] placeholder-[#877369]/70 focus:outline-none transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-widest text-[#877369] mb-1">
-                    Message *
-                  </label>
-                  <textarea
-                    rows={4}
-                    required
-                    value={formData.message}
-                    onChange={(e) =>
-                      setFormData({ ...formData, message: e.target.value })
-                    }
-                    placeholder="How can we assist your travel planning?"
-                    className="w-full bg-transparent border-b border-[#DAC2B6] focus:border-[#6C2F00] py-2 text-sm text-[#1C1B1B] placeholder-[#877369]/70 focus:outline-none transition-colors resize-none"
-                  />
-                </div>
-
-                <div className="pt-4">
+              {submitted ? (
+                <div className="py-12 text-center space-y-4">
+                  <div className="w-14 h-14 mx-auto rounded-full bg-[#CDEACE] text-[#2E4632] flex items-center justify-center">
+                    <CheckCircle className="w-8 h-8" />
+                  </div>
+                  <h3 className="font-serif text-2xl font-bold text-[#1C1B1B]">
+                    Message Sent Successfully
+                  </h3>
+                  <p className="text-sm text-[#54433A] max-w-sm mx-auto">
+                    Thank you, <strong>{formData.name}</strong>. Our concierge
+                    team has received your note and will reply to{" "}
+                    <strong>{formData.email}</strong> shortly.
+                  </p>
                   <button
-                    type="submit"
-                    disabled={loading}
-                    className="bg-[#1C1B1B] text-white px-8 py-3.5 text-xs font-semibold uppercase tracking-widest rounded hover:bg-[#6C2F00] transition-all flex items-center justify-center space-x-2 group cursor-pointer disabled:opacity-50"
+                    type="button"
+                    onClick={() => {
+                      setSubmitted(false);
+                      setFormData({
+                        name: "",
+                        email: "",
+                        subject: "",
+                        message: "",
+                      });
+                    }}
+                    className="mt-6 px-8 py-3 bg-[#6C2F00] text-white rounded text-xs font-semibold uppercase tracking-wider hover:bg-[#8B4513] transition-colors"
                   >
-                    <span>{loading ? "Sending..." : "Send Message"}</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    Send Another Dispatch
                   </button>
                 </div>
-              </form>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  <div>
+                    <label
+                      className="block text-xs font-semibold uppercase tracking-wider text-[#877369] mb-1"
+                      htmlFor="contact-name"
+                    >
+                      Full Name *
+                    </label>
+                    <input
+                      id="contact-name"
+                      type="text"
+                      required
+                      value={formData.name}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
+                      placeholder="e.g. Ananya Sharma"
+                      className="w-full bg-transparent border-b border-[#DAC2B6] py-3 text-base text-[#1C1B1B] placeholder-[#877369]/60 focus:outline-hidden focus:border-[#6C2F00] transition-colors"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      className="block text-xs font-semibold uppercase tracking-wider text-[#877369] mb-1"
+                      htmlFor="contact-email"
+                    >
+                      Email Address *
+                    </label>
+                    <input
+                      id="contact-email"
+                      type="email"
+                      required
+                      value={formData.email}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
+                      placeholder="e.g. ananya@example.com"
+                      className="w-full bg-transparent border-b border-[#DAC2B6] py-3 text-base text-[#1C1B1B] placeholder-[#877369]/60 focus:outline-hidden focus:border-[#6C2F00] transition-colors"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      className="block text-xs font-semibold uppercase tracking-wider text-[#877369] mb-1"
+                      htmlFor="contact-subject"
+                    >
+                      Subject
+                    </label>
+                    <input
+                      id="contact-subject"
+                      type="text"
+                      value={formData.subject}
+                      onChange={(e) =>
+                        setFormData({ ...formData, subject: e.target.value })
+                      }
+                      placeholder="e.g. Trip customization inquiry"
+                      className="w-full bg-transparent border-b border-[#DAC2B6] py-3 text-base text-[#1C1B1B] placeholder-[#877369]/60 focus:outline-hidden focus:border-[#6C2F00] transition-colors"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      className="block text-xs font-semibold uppercase tracking-wider text-[#877369] mb-1"
+                      htmlFor="contact-message"
+                    >
+                      Message *
+                    </label>
+                    <textarea
+                      id="contact-message"
+                      rows={4}
+                      required
+                      value={formData.message}
+                      onChange={(e) =>
+                        setFormData({ ...formData, message: e.target.value })
+                      }
+                      placeholder="How can we assist your journey?"
+                      className="w-full bg-transparent border-b border-[#DAC2B6] py-3 text-base text-[#1C1B1B] placeholder-[#877369]/60 focus:outline-hidden focus:border-[#6C2F00] transition-colors resize-none"
+                    />
+                  </div>
+
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      className="w-full sm:w-auto bg-[#1C1B1B] text-white px-10 py-4 rounded text-xs font-semibold uppercase tracking-widest hover:bg-[#6C2F00] transition-colors duration-300 inline-flex items-center justify-center gap-2 group"
+                    >
+                      <span>Send Message</span>
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  </div>
+                </form>
+              )}
             </div>
           </div>
         </div>
       </section>
 
       {/* ── 3. FINAL CTA ── */}
-      <section className="px-4 sm:px-8 lg:px-16 py-20 border-t border-[#DAC2B6]/30 text-center bg-[#F6F3F2]">
+      <section className="px-4 sm:px-8 lg:px-16 py-24 border-t border-[#DAC2B6]/20 text-center">
         <div className="max-w-2xl mx-auto space-y-6">
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#6C2F00]">
+          <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#6C2F00]">
             Ready to keep exploring?
           </h2>
-          <div>
+          <p className="text-sm sm:text-base text-[#54433A]">
+            Discover extraordinary destinations across India and begin crafting
+            your itinerary today.
+          </p>
+          <div className="pt-2">
             <Link
               to="/explore"
-              className="inline-flex items-center space-x-2 bg-[#1C1B1B] text-white px-8 py-4 text-xs font-semibold uppercase tracking-[0.15em] rounded hover:bg-[#6C2F00] transition-colors shadow-md"
+              className="inline-flex items-center gap-2 bg-[#1C1B1B] text-white px-10 py-4 rounded text-xs font-semibold uppercase tracking-widest hover:bg-[#6C2F00] transition-colors duration-300 group"
             >
               <span>Explore Destinations</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
         </div>
