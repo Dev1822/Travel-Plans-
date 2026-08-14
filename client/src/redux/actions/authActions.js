@@ -1,5 +1,6 @@
 import api from "../../services/api";
 import { toast } from "react-toastify";
+import { trackEvent } from "../../services/analytics";
 import {
   LOGIN_SUCCESS,
   LOGIN_FAIL,
@@ -61,6 +62,10 @@ export const login = (userData, navigate) => async (dispatch) => {
       payload: res.data.user,
     });
 
+    trackEvent("user_login", res.data.user?._id || res.data.user?.email, {
+      method: "email",
+    });
+
     toast.success("Welcome back! 🎉");
     if (navigate) {
       navigate("/dashboard");
@@ -78,7 +83,12 @@ export const login = (userData, navigate) => async (dispatch) => {
 // Register User
 export const register = (userData, navigate) => async (dispatch) => {
   try {
-    await api.post("/auth/register", userData);
+    const res = await api.post("/auth/register", userData);
+
+    trackEvent("user_register", res.data?.user?._id || null, {
+      email: userData.email,
+    });
+
     toast.success("Account created successfully! Please log in.");
     navigate("/login");
   } catch (error) {
@@ -109,6 +119,11 @@ export const googleLogin =
       localStorage.setItem("token", res.data.token);
 
       dispatch(loadUser());
+
+      trackEvent("user_login", res.data?.user?._id || null, {
+        method: "google",
+      });
+
       toast.success("Welcome back! 🎉");
 
       navigate("/dashboard");
@@ -122,6 +137,7 @@ export const googleLogin =
 
 // Logout User
 export const logout = () => (dispatch) => {
+  trackEvent("user_logout");
   localStorage.removeItem("token");
   dispatch({ type: LOGOUT });
   toast.info("Logged out successfully");

@@ -11,6 +11,7 @@ import FAQSection from "../components/FAQSection";
 import RecentlyViewed from "../components/RecentlyViewed";
 import { addRecentlyViewed } from "../utils/recentlyViewed";
 import TravellerSelector from "../components/TravellerSelector";
+import { trackEvent } from "../services/analytics";
 
 /* ── REVIEWS DATA FOR CAROUSEL ────────────────────────────── */
 const REVIEWS = [
@@ -494,9 +495,23 @@ const Home = () => {
     };
   }, []);
 
+  useEffect(() => {
+    trackEvent("page_view", null, {
+      page: "home",
+      title: "PackGo - Travel Planner",
+    });
+  }, []);
+
   const handleAddTrip = (dest) => {
     // Save to recently viewed regardless of auth status
     addRecentlyViewed(dest); // ← MOVE THIS to the top, before the auth check
+
+    trackEvent("plan_trip_click", null, {
+      destination: dest.name,
+      city: dest.city || dest.name,
+      category: dest.category,
+      price: dest.price,
+    });
 
     if (!isAuthenticated) {
       navigate("/login");
@@ -522,6 +537,11 @@ const Home = () => {
     const query = where.trim();
     if (query) {
       updateSearchHistory(query);
+      trackEvent("search_destination", null, {
+        query,
+        travellers,
+        checkIn: checkIn || null,
+      });
     }
     setShowRecentSearches(false);
     document
