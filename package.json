@@ -16,6 +16,9 @@
   },
   "scripts": {
     "start": "node server/server.js",
+    "server": "node server/server.js",
+    "client:dev": "npm run dev --prefix client",
+    "client:build": "npm run build --prefix client",
     "prepare": "husky"
   },
   "lint-staged": {
