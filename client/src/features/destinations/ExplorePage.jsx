@@ -1,8 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { destinationsApi } from "../../services/api/destinationsApi";
 import LoadingState from "../../components/LoadingState";
-import { Search, ArrowRight, MapPin } from "lucide-react";
+import {
+  Search,
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Compass,
+  X,
+} from "lucide-react";
 
 export const ExplorePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -10,9 +17,19 @@ export const ExplorePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Pagination & Filter state
   const activeZone = searchParams.get("zone") || "all";
   const searchQuery = searchParams.get("search") || "";
+  const currentPage = Math.max(
+    1,
+    parseInt(searchParams.get("page") || "1", 10),
+  );
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const [localSearch, setLocalSearch] = useState(searchQuery);
+
+  const gridSectionRef = useRef(null);
+  const ITEMS_PER_PAGE = 8;
 
   const zones = [
     { id: "all", label: "All" },
@@ -21,22 +38,69 @@ export const ExplorePage = () => {
     { id: "South India", label: "South India" },
     { id: "West India", label: "West India" },
     { id: "East India", label: "East India" },
+    { id: "Central India", label: "Central India" },
   ];
+
+  // Keep local search input synchronized if URL param changes
+  useEffect(() => {
+    setLocalSearch(searchQuery);
+  }, [searchQuery]);
 
   const fetchDestinations = async () => {
     setLoading(true);
     setError(null);
     try {
-      const params = {};
+      const params = {
+        page: currentPage,
+        limit: ITEMS_PER_PAGE,
+      };
       if (searchQuery) params.search = searchQuery;
-      if (activeZone !== "all" && activeZone !== "popular")
+      if (activeZone !== "all" && activeZone !== "popular") {
         params.zone = activeZone;
+      }
 
       const res = await destinationsApi.getAll(params);
-      const data = res.data?.data || res.data?.destinations || res.data || [];
-      setDestinations(Array.isArray(data) ? data : []);
+      const resData = res.data;
+
+      if (resData && Array.isArray(resData.destinations)) {
+        setDestinations(resData.destinations);
+        setTotalPages(resData.totalPages || 1);
+        setTotalCount(resData.total || 0);
+      } else if (Array.isArray(resData)) {
+        // Fallback filtering if backend returns plain array
+        const filtered = resData.filter((dest) => {
+          if (searchQuery) {
+            const q = searchQuery.toLowerCase();
+            const matchName = dest.name?.toLowerCase().includes(q);
+            const matchCity = dest.city?.toLowerCase().includes(q);
+            const matchState = dest.state?.toLowerCase().includes(q);
+            if (!matchName && !matchCity && !matchState) return false;
+          }
+          if (activeZone !== "all" && activeZone !== "popular") {
+            if (
+              dest.zone &&
+              !dest.zone.toLowerCase().includes(activeZone.toLowerCase())
+            ) {
+              return false;
+            }
+          }
+          return true;
+        });
+
+        const calculatedTotalPages =
+          Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
+        setTotalPages(calculatedTotalPages);
+        setTotalCount(filtered.length);
+
+        const start = (currentPage - 1) * ITEMS_PER_PAGE;
+        setDestinations(filtered.slice(start, start + ITEMS_PER_PAGE));
+      } else {
+        setDestinations([]);
+        setTotalPages(1);
+        setTotalCount(0);
+      }
     } catch (err) {
-      console.warn("Failed to fetch live destinations:", err);
+      console.warn("Failed to fetch destinations:", err);
       setError("Unable to load the destinations catalogue.");
     } finally {
       setLoading(false);
@@ -45,13 +109,22 @@ export const ExplorePage = () => {
 
   useEffect(() => {
     fetchDestinations();
-  }, [activeZone, searchQuery]);
+  }, [activeZone, searchQuery, currentPage]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     const nextParams = {};
     if (activeZone !== "all") nextParams.zone = activeZone;
     if (localSearch.trim()) nextParams.search = localSearch.trim();
+    nextParams.page = "1";
+    setSearchParams(nextParams);
+  };
+
+  const handleClearSearch = () => {
+    setLocalSearch("");
+    const nextParams = {};
+    if (activeZone !== "all") nextParams.zone = activeZone;
+    nextParams.page = "1";
     setSearchParams(nextParams);
   };
 
@@ -59,11 +132,32 @@ export const ExplorePage = () => {
     const nextParams = {};
     if (zoneId !== "all") nextParams.zone = zoneId;
     if (searchQuery) nextParams.search = searchQuery;
+    nextParams.page = "1";
     setSearchParams(nextParams);
   };
 
-  // Stitch Curated Editorial Items
-  const curatedDestinations = [
+  const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > totalPages || newPage === currentPage) return;
+    const nextParams = {};
+    if (activeZone !== "all") nextParams.zone = activeZone;
+    if (searchQuery) nextParams.search = searchQuery;
+    nextParams.page = String(newPage);
+    setSearchParams(nextParams);
+
+    if (gridSectionRef.current) {
+      gridSectionRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
+  // Curated fallback if DB is completely empty and no search/filters applied
+  const isFiltered = Boolean(
+    searchQuery.trim() || (activeZone !== "all" && activeZone !== "popular"),
+  );
+
+  const defaultCuratedDestinations = [
     {
       _id: "jaipur",
       name: "Jaipur",
@@ -118,7 +212,7 @@ export const ExplorePage = () => {
           escapes.
         </p>
 
-        {/* Search Bar */}
+        {/* Search Bar with Submit & Clear Button */}
         <form
           onSubmit={handleSearchSubmit}
           className="w-full max-w-2xl relative"
@@ -131,6 +225,16 @@ export const ExplorePage = () => {
             placeholder="Search destinations, cities or states..."
             className="w-full bg-transparent border-b border-[#DAC2B6] focus:border-[#6C2F00] px-12 py-4 text-base sm:text-lg text-[#1C1B1B] placeholder-[#877369]/60 focus:outline-hidden transition-colors"
           />
+          {localSearch && (
+            <button
+              type="button"
+              onClick={handleClearSearch}
+              className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-[#877369] hover:text-[#1C1B1B] transition-colors"
+              title="Clear search"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </form>
       </header>
 
@@ -154,8 +258,9 @@ export const ExplorePage = () => {
         </div>
       </section>
 
-      {/* ── 3. FEATURED DESTINATION HERO (Udaipur, Rajasthan) ── */}
+      {/* ── 3. FEATURED DESTINATION HERO (Only when not actively searching) ── */}
       {!searchQuery &&
+        currentPage === 1 &&
         (activeZone === "all" ||
           activeZone === "popular" ||
           activeZone === "North India") && (
@@ -194,10 +299,30 @@ export const ExplorePage = () => {
         )}
 
       {/* ── 4. ASYMMETRICAL EDITORIAL DESTINATIONS GRID ── */}
-      <section className="w-full px-4 sm:px-8 lg:px-16 max-w-7xl mx-auto space-y-12">
-        <h3 className="font-serif text-3xl sm:text-4xl font-bold text-[#1C1B1B]">
-          Discover more
-        </h3>
+      <section
+        ref={gridSectionRef}
+        className="w-full px-4 sm:px-8 lg:px-16 max-w-7xl mx-auto space-y-12"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#DAC2B6]/30 pb-4">
+          <div>
+            <h3 className="font-serif text-3xl sm:text-4xl font-bold text-[#1C1B1B]">
+              {searchQuery ? `Search Results` : `Discover more`}
+            </h3>
+            <p className="text-xs text-[#54433A] mt-1">
+              {searchQuery
+                ? `Showing destinations matching "${searchQuery}"`
+                : `Curated escapes and royal sanctuaries across the subcontinent.`}
+            </p>
+          </div>
+
+          {totalCount > 0 && (
+            <span className="text-xs font-semibold uppercase tracking-widest text-[#877369]">
+              Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}–
+              {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} of{" "}
+              {totalCount} places
+            </span>
+          )}
+        </div>
 
         {loading ? (
           <LoadingState message="Unfurling destination catalogue..." />
@@ -205,63 +330,149 @@ export const ExplorePage = () => {
           <div className="p-8 bg-[#FFDAD6]/30 border border-[#BA1A1A]/30 rounded text-center">
             <p className="text-xs font-semibold text-[#BA1A1A]">{error}</p>
           </div>
+        ) : destinations.length === 0 && isFiltered ? (
+          /* ── 5. EMPTY SEARCH / FILTER STATE ── */
+          <div className="py-16 px-4 bg-white/70 border border-[#DAC2B6]/40 rounded text-center space-y-4 max-w-xl mx-auto shadow-xs">
+            <div className="w-12 h-12 rounded-full bg-[#F6F3F2] flex items-center justify-center mx-auto text-[#6C2F00]">
+              <Search className="w-6 h-6" />
+            </div>
+            <h4 className="font-serif text-2xl font-bold text-[#1C1B1B]">
+              No destinations found
+            </h4>
+            <p className="text-xs sm:text-sm text-[#54433A] max-w-md mx-auto leading-relaxed">
+              We couldn't find any places matching{" "}
+              {searchQuery ? (
+                <strong className="text-[#1C1B1B]">"{searchQuery}"</strong>
+              ) : (
+                `the selected ${activeZone} filter`
+              )}
+              . Try checking for spelling or exploring all zones.
+            </p>
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={handleClearSearch}
+                className="bg-[#6C2F00] text-white text-xs font-semibold uppercase tracking-widest px-6 py-3 rounded hover:bg-[#8B4513] transition-colors cursor-pointer"
+              >
+                Clear Search & Show All
+              </button>
+            </div>
+          </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8">
-            {destinations.length > 0
-              ? destinations.map((dest, idx) => {
-                  const isLarge = idx % 5 === 0;
-                  const spanClass = isLarge
-                    ? "md:col-span-8 h-[480px]"
-                    : "md:col-span-4 h-[480px]";
-                  const cover =
-                    dest.imageUrl ||
-                    (dest.images && dest.images[0]) ||
-                    "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1200&q=80";
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8">
+              {(destinations.length > 0
+                ? destinations
+                : defaultCuratedDestinations
+              ).map((dest, idx) => {
+                const isLarge = idx % 5 === 0;
+                const spanClass = isLarge
+                  ? "md:col-span-8 h-[480px]"
+                  : "md:col-span-4 h-[480px]";
+                const cover =
+                  dest.imageUrl ||
+                  (dest.images && dest.images[0]) ||
+                  "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1200&q=80";
 
-                  return (
-                    <Link
-                      key={dest._id || dest.name}
-                      to={`/destinations/${dest.slug || dest._id}`}
-                      className={`relative ${spanClass} overflow-hidden rounded bg-[#1C1B1B] group image-zoom cursor-pointer shadow-sm`}
-                    >
-                      <div
-                        className="w-full h-full bg-cover bg-center absolute inset-0 transform transition-transform duration-700 group-hover:scale-105"
-                        style={{ backgroundImage: `url("${cover}")` }}
-                      />
-                      <div className="absolute inset-0 scrim-bottom" />
-                      <div className="absolute bottom-0 left-0 p-8 text-white">
-                        <h4 className="font-serif text-3xl sm:text-4xl font-bold">
-                          {dest.name}
-                        </h4>
-                        <p className="text-xs text-[#FFB68C] font-semibold uppercase tracking-widest mt-1.5">
-                          {dest.state || dest.zone || "India"}
-                        </p>
-                      </div>
-                    </Link>
-                  );
-                })
-              : curatedDestinations.map((item) => (
+                return (
                   <Link
-                    key={item._id}
-                    to="/destinations/udaipur"
-                    className={`relative ${item.gridSpan} overflow-hidden rounded bg-[#1C1B1B] group image-zoom cursor-pointer shadow-sm`}
+                    key={dest._id || dest.name}
+                    to={`/destinations/${dest.slug || dest._id}`}
+                    className={`relative ${spanClass} overflow-hidden rounded bg-[#1C1B1B] group image-zoom cursor-pointer shadow-sm`}
                   >
                     <div
                       className="w-full h-full bg-cover bg-center absolute inset-0 transform transition-transform duration-700 group-hover:scale-105"
-                      style={{ backgroundImage: `url("${item.imageUrl}")` }}
+                      style={{ backgroundImage: `url("${cover}")` }}
                     />
                     <div className="absolute inset-0 scrim-bottom" />
                     <div className="absolute bottom-0 left-0 p-8 text-white">
                       <h4 className="font-serif text-3xl sm:text-4xl font-bold">
-                        {item.name}
+                        {dest.name}
                       </h4>
                       <p className="text-xs text-[#FFB68C] font-semibold uppercase tracking-widest mt-1.5">
-                        {item.state}
+                        {dest.state || dest.zone || "India"}
                       </p>
                     </div>
                   </Link>
-                ))}
-          </div>
+                );
+              })}
+            </div>
+
+            {/* ── 6. PAGINATION CONTROLS ── */}
+            {totalPages > 1 && (
+              <div className="pt-12 border-t border-[#DAC2B6]/30 flex flex-col sm:flex-row items-center justify-between gap-6">
+                <p className="text-xs text-[#54433A] font-medium">
+                  Page <strong className="text-[#1C1B1B]">{currentPage}</strong>{" "}
+                  of <strong className="text-[#1C1B1B]">{totalPages}</strong>
+                </p>
+
+                <div className="flex items-center space-x-2">
+                  {/* Previous Page Button */}
+                  <button
+                    type="button"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage <= 1}
+                    className="px-4 py-2.5 rounded border border-[#DAC2B6] text-xs font-semibold uppercase tracking-wider text-[#1C1B1B] hover:bg-[#F6F3F2] disabled:opacity-40 disabled:cursor-not-allowed transition-colors inline-flex items-center gap-1 cursor-pointer"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    <span>Previous</span>
+                  </button>
+
+                  {/* Page Numbers */}
+                  <div className="flex items-center space-x-1.5 px-2">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                      (pageNum) => {
+                        if (
+                          totalPages > 7 &&
+                          pageNum !== 1 &&
+                          pageNum !== totalPages &&
+                          Math.abs(pageNum - currentPage) > 2
+                        ) {
+                          if (pageNum === 2 || pageNum === totalPages - 1) {
+                            return (
+                              <span
+                                key={pageNum}
+                                className="text-xs text-[#877369] px-1"
+                              >
+                                ...
+                              </span>
+                            );
+                          }
+                          return null;
+                        }
+
+                        return (
+                          <button
+                            key={pageNum}
+                            type="button"
+                            onClick={() => handlePageChange(pageNum)}
+                            className={`w-9 h-9 rounded text-xs font-semibold transition-all cursor-pointer ${
+                              currentPage === pageNum
+                                ? "bg-[#6C2F00] text-white shadow-xs font-bold"
+                                : "text-[#54433A] hover:bg-[#F6F3F2] hover:text-[#1C1B1B]"
+                            }`}
+                          >
+                            {pageNum}
+                          </button>
+                        );
+                      },
+                    )}
+                  </div>
+
+                  {/* Next Page Button */}
+                  <button
+                    type="button"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage >= totalPages}
+                    className="px-4 py-2.5 rounded border border-[#DAC2B6] text-xs font-semibold uppercase tracking-wider text-[#1C1B1B] hover:bg-[#F6F3F2] disabled:opacity-40 disabled:cursor-not-allowed transition-colors inline-flex items-center gap-1 cursor-pointer"
+                  >
+                    <span>Next</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </section>
     </div>

@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, ChevronDown, CheckCircle } from "lucide-react";
+import {
+  ArrowRight,
+  ChevronDown,
+  CheckCircle,
+  ArrowUpRight,
+} from "lucide-react";
 
 export const ContactHelpPage = () => {
   const [formData, setFormData] = useState({
@@ -14,24 +19,28 @@ export const ContactHelpPage = () => {
 
   const faqs = [
     {
-      q: "How do I create a trip?",
-      a: "Simply navigate to the Explore section, find your desired destination, and click 'Start Planning'. Our intuitive builder will guide you through the process step-by-step.",
+      q: "Getting Started",
+      title: "How do I create a trip?",
+      answer:
+        "Simply navigate to the Explore section, find your desired destination, and click 'Start Planning'. Our intuitive builder will guide you through the process step-by-step.",
     },
     {
-      q: "How do I manage my journey?",
-      a: "You can access all your upcoming and past journeys in your Account dashboard. From there, you can edit itineraries, add notes, track expenses, and invite travel companions.",
+      q: "Trips",
+      title: "How do I manage my journey?",
+      answer:
+        "You can access all your upcoming and past journeys in your Account dashboard. From there, you can edit itineraries, add notes, and invite travel companions.",
     },
     {
-      q: "How do I explore destinations?",
-      a: "Use our search functionality or browse our curated editorial collections. Each destination features comprehensive guides tailored to a slow, immersive travel experience.",
+      q: "Destinations",
+      title: "How do I explore destinations?",
+      answer:
+        "Use our search functionality or browse our curated editorial collections. Each destination features comprehensive guides tailored to a premium travel experience.",
     },
     {
-      q: "How do I update my profile?",
-      a: "Navigate to 'Settings' within your Account menu to update personal details, security preferences, email address, and notification settings.",
-    },
-    {
-      q: "Can I share my journey itinerary with others?",
-      a: "Yes! In your trip overview, click 'Share Journey' to generate a secure, read-only link. Anyone with the link can view your itinerary, places, and packing tips.",
+      q: "Account",
+      title: "How do I update my profile?",
+      answer:
+        "Navigate to 'Settings' within your Account menu to update personal details, preferences, and payment information.",
     },
   ];
 
@@ -43,28 +52,27 @@ export const ContactHelpPage = () => {
 
   return (
     <div className="bg-[#FCF9F8] text-[#1C1B1B] min-h-screen">
-      {/* ── 1. HERO SECTION ── */}
-      <section className="relative min-h-[50vh] flex items-center px-4 sm:px-8 lg:px-16 pt-32 pb-20 overflow-hidden">
-        <div className="absolute inset-0 z-0 opacity-40">
-          <img
-            alt="Scenic Rajasthan landscape"
-            className="w-full h-full object-cover"
-            src="https://lh3.googleusercontent.com/aida/AP1WRLtYlGQujR8-Cvy1dlld5Jy7JwKkUsxsuT-dWZeGGYXUc5d4HyHsILmlmxW49X4jvjTj9i1ST-z7Zl20tRanwaLv0_cTKeTkP2xPuuOOCmuBBfXUAZOG6H6BySKvPuk_87mT6fNB7qojgnu1-VM6Ps1hUUQZ6nO2LPjs0sNU6paMFzfT4Cx48rOW04qaGEqAUxid7gcvaOtqFNXnVeCMhR027Lo3KgBogPrChAJBG_Net1_yomF3srbOZMfB"
+      {/* ── 1. HERO SECTION WITH VISIBLE EDITORIAL BACKGROUND IMAGE ── */}
+      <section className="relative min-h-[60vh] flex items-center px-4 sm:px-8 lg:px-16 pt-32 pb-24 overflow-hidden">
+        {/* Background Image Container */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <div
+            className="w-full h-full bg-cover bg-center absolute inset-0 opacity-40 transform scale-105 transition-transform duration-1000"
+            style={{
+              backgroundImage: `url("https://lh3.googleusercontent.com/aida-public/AB6AXuAOV-43zz_fQSzOafoR51SfV6I1RqXMZrQ9icbYKqE4SJaT1NdNcl592jB75eI1FhdJqpXK4381iSvJPz4IzqkdDkfp2W0AVrZwun8aWE1lEKtwH0mlY-VS_mCcb2Pz9rUudIBcRy-zMCBYwcldOspXp_9Jl9vPVlFpsK8EA25kXgGm8qiMcV9cxlO_SboqBFWGjW2NhXms4uFwQ9F9FUc1DnL37nRoyZaLglXwpSzX43qhtt7bQTR07g")`,
+            }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#FCF9F8] via-[#FCF9F8]/85 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#FCF9F8] via-[#FCF9F8]/80 to-transparent" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto w-full">
-          <div className="max-w-3xl">
-            <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#6C2F00] block mb-3">
-              ASSISTANCE & EDITORIAL CARE
-            </span>
-            <h1 className="font-serif text-4xl sm:text-6xl font-bold text-[#6C2F00] mb-4">
+        {/* Hero Content */}
+        <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12">
+          <div className="md:col-span-8 space-y-4">
+            <h1 className="font-serif text-5xl sm:text-7xl lg:text-8xl font-bold text-[#6C2F00] leading-tight">
               How can we help?
             </h1>
-            <p className="text-base sm:text-lg text-[#54433A] max-w-2xl leading-relaxed">
-              Have a question about PackGo or your journey? We're here to help
-              you craft an effortless and unforgettable travel experience.
+            <p className="text-lg sm:text-xl text-[#54433A] max-w-2xl font-normal leading-relaxed">
+              Have a question about PackGo or your journey? We're here to help.
             </p>
           </div>
         </div>
@@ -75,7 +83,7 @@ export const ContactHelpPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
           {/* Left Column: FAQ */}
           <div className="lg:col-span-6">
-            <h2 className="font-serif text-3xl font-bold text-[#6C2F00] mb-8 border-b border-[#DAC2B6]/40 pb-4">
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#6C2F00] mb-8 border-b border-[#DAC2B6]/30 pb-4">
               Help
             </h2>
 
@@ -83,25 +91,27 @@ export const ContactHelpPage = () => {
               {faqs.map((faq, idx) => {
                 const isOpen = openFaq === idx;
                 return (
-                  <div key={idx} className="py-5">
-                    <button
-                      type="button"
+                  <div key={idx} className="py-6 cursor-pointer">
+                    <div
                       onClick={() => setOpenFaq(isOpen ? -1 : idx)}
-                      className="w-full flex justify-between items-center text-left group transition-colors"
+                      className="flex justify-between items-center group cursor-pointer"
                     >
-                      <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#1C1B1B] group-hover:text-[#6C2F00] transition-colors pr-4">
+                      <h3 className="font-serif text-2xl font-semibold text-[#1C1B1B] group-hover:text-[#6C2F00] transition-colors">
                         {faq.q}
                       </h3>
                       <ChevronDown
-                        className={`w-5 h-5 text-[#877369] group-hover:text-[#6C2F00] transition-transform duration-300 shrink-0 ${
+                        className={`w-5 h-5 text-[#877369] group-hover:text-[#6C2F00] transition-transform duration-300 ${
                           isOpen ? "rotate-180" : ""
                         }`}
                       />
-                    </button>
+                    </div>
 
                     {isOpen && (
-                      <div className="pt-3 text-sm text-[#54433A] leading-relaxed font-sans animate-fade-in-up">
-                        {faq.a}
+                      <div className="pt-4 text-base text-[#54433A] leading-relaxed font-sans animate-fade-in-up">
+                        <strong className="text-[#1C1B1B] block mb-1">
+                          {faq.title}
+                        </strong>
+                        <p>{faq.answer}</p>
                       </div>
                     )}
                   </div>
@@ -110,29 +120,29 @@ export const ContactHelpPage = () => {
             </div>
 
             {/* Direct Contact */}
-            <div className="mt-16 pt-8 border-t border-[#DAC2B6]/40">
+            <div className="mt-16 pt-8 border-t border-[#DAC2B6]/30">
               <h4 className="text-xs font-semibold text-[#877369] uppercase tracking-widest mb-2">
-                Need direct help with your journey?
+                Need help with your journey?
               </h4>
               <a
-                className="font-serif text-2xl sm:text-3xl font-bold text-[#6C2F00] hover:text-[#8B4513] transition-colors inline-flex items-center gap-2"
+                className="font-serif text-3xl font-bold text-[#6C2F00] hover:text-[#8B4513] transition-colors inline-flex items-center gap-2"
                 href="mailto:support@packgo.com"
               >
-                support@packgo.com
-                <ArrowRight className="w-5 h-5 -rotate-45" />
+                <span>support@packgo.com</span>
+                <ArrowUpRight className="w-6 h-6" />
               </a>
             </div>
           </div>
 
           {/* Right Column: Editorial Contact Form */}
           <div className="lg:col-span-6 relative">
-            <div className="lg:sticky lg:top-32 bg-white/60 p-6 sm:p-10 rounded border border-[#DAC2B6]/30 shadow-xs">
-              <h2 className="font-serif text-3xl font-bold text-[#6C2F00] mb-8 border-b border-[#DAC2B6]/40 pb-4">
+            <div className="lg:sticky lg:top-32">
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#6C2F00] mb-8 border-b border-[#DAC2B6]/30 pb-4">
                 Send us a message
               </h2>
 
               {submitted ? (
-                <div className="py-12 text-center space-y-4">
+                <div className="py-12 bg-white/70 p-8 rounded border border-[#DAC2B6]/40 text-center space-y-4 shadow-xs">
                   <div className="w-14 h-14 mx-auto rounded-full bg-[#CDEACE] text-[#2E4632] flex items-center justify-center">
                     <CheckCircle className="w-8 h-8" />
                   </div>
@@ -140,8 +150,8 @@ export const ContactHelpPage = () => {
                     Message Sent Successfully
                   </h3>
                   <p className="text-sm text-[#54433A] max-w-sm mx-auto">
-                    Thank you, <strong>{formData.name}</strong>. Our concierge
-                    team has received your note and will reply to{" "}
+                    Thank you, <strong>{formData.name}</strong>. Our team has
+                    received your note and will reply to{" "}
                     <strong>{formData.email}</strong> shortly.
                   </p>
                   <button
@@ -155,19 +165,16 @@ export const ContactHelpPage = () => {
                         message: "",
                       });
                     }}
-                    className="mt-6 px-8 py-3 bg-[#6C2F00] text-white rounded text-xs font-semibold uppercase tracking-wider hover:bg-[#8B4513] transition-colors"
+                    className="mt-6 px-8 py-3 bg-[#1C1B1B] text-white rounded text-xs font-semibold uppercase tracking-wider hover:bg-[#6C2F00] transition-colors"
                   >
-                    Send Another Dispatch
+                    Send Another Message
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-8">
+                <form onSubmit={handleSubmit} className="space-y-10">
                   <div>
-                    <label
-                      className="block text-xs font-semibold uppercase tracking-wider text-[#877369] mb-1"
-                      htmlFor="contact-name"
-                    >
-                      Full Name *
+                    <label className="sr-only" htmlFor="contact-name">
+                      Name
                     </label>
                     <input
                       id="contact-name"
@@ -177,17 +184,14 @@ export const ContactHelpPage = () => {
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
                       }
-                      placeholder="e.g. Ananya Sharma"
-                      className="w-full bg-transparent border-b border-[#DAC2B6] py-3 text-base text-[#1C1B1B] placeholder-[#877369]/60 focus:outline-hidden focus:border-[#6C2F00] transition-colors"
+                      placeholder="Name"
+                      className="w-full bg-transparent border-0 border-b border-[#DAC2B6] py-3 text-lg text-[#1C1B1B] placeholder-[#877369]/60 focus:ring-0 focus:border-[#6C2F00] transition-colors"
                     />
                   </div>
 
                   <div>
-                    <label
-                      className="block text-xs font-semibold uppercase tracking-wider text-[#877369] mb-1"
-                      htmlFor="contact-email"
-                    >
-                      Email Address *
+                    <label className="sr-only" htmlFor="contact-email">
+                      Email
                     </label>
                     <input
                       id="contact-email"
@@ -197,16 +201,13 @@ export const ContactHelpPage = () => {
                       onChange={(e) =>
                         setFormData({ ...formData, email: e.target.value })
                       }
-                      placeholder="e.g. ananya@example.com"
-                      className="w-full bg-transparent border-b border-[#DAC2B6] py-3 text-base text-[#1C1B1B] placeholder-[#877369]/60 focus:outline-hidden focus:border-[#6C2F00] transition-colors"
+                      placeholder="Email Address"
+                      className="w-full bg-transparent border-0 border-b border-[#DAC2B6] py-3 text-lg text-[#1C1B1B] placeholder-[#877369]/60 focus:ring-0 focus:border-[#6C2F00] transition-colors"
                     />
                   </div>
 
                   <div>
-                    <label
-                      className="block text-xs font-semibold uppercase tracking-wider text-[#877369] mb-1"
-                      htmlFor="contact-subject"
-                    >
+                    <label className="sr-only" htmlFor="contact-subject">
                       Subject
                     </label>
                     <input
@@ -216,17 +217,14 @@ export const ContactHelpPage = () => {
                       onChange={(e) =>
                         setFormData({ ...formData, subject: e.target.value })
                       }
-                      placeholder="e.g. Trip customization inquiry"
-                      className="w-full bg-transparent border-b border-[#DAC2B6] py-3 text-base text-[#1C1B1B] placeholder-[#877369]/60 focus:outline-hidden focus:border-[#6C2F00] transition-colors"
+                      placeholder="Subject"
+                      className="w-full bg-transparent border-0 border-b border-[#DAC2B6] py-3 text-lg text-[#1C1B1B] placeholder-[#877369]/60 focus:ring-0 focus:border-[#6C2F00] transition-colors"
                     />
                   </div>
 
                   <div>
-                    <label
-                      className="block text-xs font-semibold uppercase tracking-wider text-[#877369] mb-1"
-                      htmlFor="contact-message"
-                    >
-                      Message *
+                    <label className="sr-only" htmlFor="contact-message">
+                      Message
                     </label>
                     <textarea
                       id="contact-message"
@@ -236,15 +234,15 @@ export const ContactHelpPage = () => {
                       onChange={(e) =>
                         setFormData({ ...formData, message: e.target.value })
                       }
-                      placeholder="How can we assist your journey?"
-                      className="w-full bg-transparent border-b border-[#DAC2B6] py-3 text-base text-[#1C1B1B] placeholder-[#877369]/60 focus:outline-hidden focus:border-[#6C2F00] transition-colors resize-none"
+                      placeholder="How can we assist you?"
+                      className="w-full bg-transparent border-0 border-b border-[#DAC2B6] py-3 text-lg text-[#1C1B1B] placeholder-[#877369]/60 focus:ring-0 focus:border-[#6C2F00] transition-colors resize-none"
                     />
                   </div>
 
-                  <div className="pt-2">
+                  <div className="pt-4">
                     <button
                       type="submit"
-                      className="w-full sm:w-auto bg-[#1C1B1B] text-white px-10 py-4 rounded text-xs font-semibold uppercase tracking-widest hover:bg-[#6C2F00] transition-colors duration-300 inline-flex items-center justify-center gap-2 group"
+                      className="bg-[#1C1B1B] text-[#FCF9F8] px-10 py-4 text-base font-normal border border-[#1C1B1B] hover:bg-[#6C2F00] hover:border-[#6C2F00] transition-all duration-300 w-full sm:w-auto text-center inline-flex items-center justify-center gap-2 group cursor-pointer"
                     >
                       <span>Send Message</span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -260,17 +258,13 @@ export const ContactHelpPage = () => {
       {/* ── 3. FINAL CTA ── */}
       <section className="px-4 sm:px-8 lg:px-16 py-24 border-t border-[#DAC2B6]/20 text-center">
         <div className="max-w-2xl mx-auto space-y-6">
-          <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#6C2F00]">
+          <h2 className="font-serif text-4xl sm:text-6xl font-bold text-[#6C2F00]">
             Ready to keep exploring?
           </h2>
-          <p className="text-sm sm:text-base text-[#54433A]">
-            Discover extraordinary destinations across India and begin crafting
-            your itinerary today.
-          </p>
           <div className="pt-2">
             <Link
               to="/explore"
-              className="inline-flex items-center gap-2 bg-[#1C1B1B] text-white px-10 py-4 rounded text-xs font-semibold uppercase tracking-widest hover:bg-[#6C2F00] transition-colors duration-300 group"
+              className="inline-flex items-center gap-2 bg-[#1C1B1B] text-white px-10 py-4 text-base font-normal border border-[#1C1B1B] hover:bg-[#6C2F00] hover:border-[#6C2F00] transition-all duration-300 group cursor-pointer"
             >
               <span>Explore Destinations</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
