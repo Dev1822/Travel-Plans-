@@ -306,57 +306,71 @@ exports.changePassword = async (req, res, next) => {
 // Forgot Password
 exports.forgotPassword = async (req, res, next) => {
   try {
-    if (typeof req.body.email !== "string") {
-      return res.status(400).json({ msg: "Please enter a valid email" });
+    const { email } = req.body;
+    if (typeof email !== "string" || !email.trim()) {
+      return res
+        .status(400)
+        .json({ msg: "Please enter a valid email address." });
     }
-    const user = await User.findOne({ email: req.body.email });
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail });
 
     if (!user) {
-      return res.status(400).json({ msg: "There is no user with that email" });
+      // Return 404 or 400 with a clear message
+      return res
+        .status(404)
+        .json({ msg: "No account found with that email address." });
     }
 
     // Get reset token
     const resetToken = user.getResetPasswordToken();
-
     await user.save({ validateBeforeSave: false });
 
     // Create reset url
-    // Assumes frontend is running on localhost:3000 during dev or the deployed URL
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
     const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
 
-    // Only print to console during local development for easy testing
-    if (process.env.NODE_ENV === "development") {
-      console.log("\n=======================================================");
-      console.log("🚀 DEV MODE: PASSWORD RESET LINK GENERATED");
-      console.log(resetUrl);
-      console.log("=======================================================\n");
-    }
+    console.log("\n=======================================================");
+    console.log("🚀 PASSWORD RESET LINK GENERATED");
+    console.log(`User: ${user.email}`);
+    console.log(`Reset URL: ${resetUrl}`);
+    console.log("=======================================================\n");
 
-    const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please make a PUT request to: \n\n ${resetUrl}`;
+    const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please visit the following link to reset your password:\n\n${resetUrl}\n\nThis link will expire in 10 minutes.`;
 
     try {
-      // We still try to send the email, but if it takes too long, they already have the link above!
       await sendEmail({
         email: user.email,
-        subject: "Password reset token",
+        subject: "Password Reset Request - PackGo",
         message,
         html: getPasswordResetTemplate(user.name, resetUrl),
       });
 
-      res.status(200).json({ success: true, data: "Email sent successfully" });
+      return res.status(200).json({
+        success: true,
+        msg: "Password reset link sent to your email successfully.",
+      });
     } catch (err) {
-      console.error("Email sending failed:", err);
+      console.warn("[forgotPassword] Email dispatch failed:", err.message);
 
-      // Reset the token fields since the email failed
+      // In development or when SMTP is offline, keep the token active so developers can reset via terminal link
+      if (process.env.NODE_ENV !== "production") {
+        return res.status(200).json({
+          success: true,
+          msg: "Password reset link generated! (Check server console for reset URL in dev mode).",
+          resetUrl,
+        });
+      }
+
+      // In production, clear token if email delivery failed
       user.resetPasswordToken = undefined;
       user.resetPasswordExpire = undefined;
       await user.save({ validateBeforeSave: false });
 
-      // Return a proper 500 error in production
-      return res
-        .status(500)
-        .json({ msg: "Email could not be sent. Please try again later." });
+      return res.status(500).json({
+        msg: "Email could not be sent. Please check your SMTP configuration.",
+      });
     }
   } catch (err) {
     next(err);
@@ -485,6 +499,13 @@ exports.requestEmailChange = async (req, res, next) => {
     currentUser.tempEmail = email;
     await currentUser.save();
 
+    // Log OTP for local development
+    console.log("\n=======================================================");
+    console.log("🚀 DEV MODE: EMAIL CHANGE OTP GENERATED");
+    console.log(`New Email: ${email}`);
+    console.log(`OTP Code: ${otp}`);
+    console.log("=======================================================\n");
+
     // Send Email
     try {
       await sendEmail({
@@ -498,18 +519,15 @@ exports.requestEmailChange = async (req, res, next) => {
         ),
       });
     } catch (emailErr) {
-      console.error("[authController] Email change OTP failure:", emailErr);
-      return res.status(500).json({
-        msg: "Failed to send email verification code. Please try again later.",
-      });
-    }
-
-    if (process.env.NODE_ENV === "development" || !process.env.SMTP_HOST) {
-      console.log("\n=======================================================");
-      console.log("🚀 DEV MODE: EMAIL CHANGE OTP GENERATED");
-      console.log(`New Email: ${email}`);
-      console.log(`OTP Code: ${otp}`);
-      console.log("=======================================================\n");
+      console.warn(
+        "[authController] Email change OTP dispatch failed:",
+        emailErr.message,
+      );
+      if (process.env.NODE_ENV === "production") {
+        return res.status(500).json({
+          msg: "Failed to send email verification code. Please try again later.",
+        });
+      }
     }
 
     res.json({
