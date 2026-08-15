@@ -188,7 +188,7 @@ export const LoginPage = () => {
               size="large"
               shape="rectangular"
               text="signin_with"
-              width="100%"
+              width="350"
             />
           </div>
 

@@ -55,10 +55,8 @@ export const RegisterPage = () => {
 
     setLoading(true);
     try {
-      const res = await register(name.trim(), email.trim(), password);
-      navigate("/check-email", {
-        state: { email: email.trim(), message: res?.msg },
-      });
+      await register(name.trim(), email.trim(), password);
+      navigate("/my-journey", { replace: true });
     } catch (err) {
       setError(
         getErrorMessage(err, "Failed to create account. Please try again."),
@@ -253,7 +251,7 @@ export const RegisterPage = () => {
               size="large"
               shape="rectangular"
               text="signup_with"
-              width="100%"
+              width="350"
             />
           </div>
 
