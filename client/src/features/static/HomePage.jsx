@@ -1,18 +1,8 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import {
-  Compass,
-  ArrowRight,
-  Sparkles,
-  MapPin,
-  Calendar,
-  Layers,
-  ChevronRight,
-} from "lucide-react";
+import React from "react";
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
 export const HomePage = () => {
-  const navigate = useNavigate();
-
   return (
     <div className="bg-[#FCF9F8] text-[#1C1B1B] overflow-x-hidden">
       {/* ── 1. HERO SECTION (Udaipur Lake Palace Dawn) ── */}
@@ -72,7 +62,7 @@ export const HomePage = () => {
             <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#1C1B1B]">
               Explore India
             </h2>
-            <p className="text-sm sm:text-base text-[#54433A] mt-2">
+            <p className="text-sm sm:text-base text-[#3E312A] mt-2">
               Find your next destination, from timeless heritage cities to
               peaceful escapes.
             </p>
@@ -80,6 +70,7 @@ export const HomePage = () => {
 
           <Link
             to="/explore"
+            aria-label="View all curated travel destinations in India"
             className="inline-flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-[#6C2F00] hover:text-[#8B4513] group"
           >
             <span>View all destinations</span>
@@ -92,11 +83,16 @@ export const HomePage = () => {
           {/* Dominant Feature: Jaipur (8 Cols) */}
           <Link
             to="/explore"
+            aria-label="Explore Jaipur, Rajasthan"
             className="group md:col-span-8 relative aspect-[16/10] md:aspect-[4/3] overflow-hidden rounded bg-[#F0EDED] image-zoom block shadow-sm"
           >
             <img
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRfb4CabRzu7syPAlZu64XE7CneZbXnm05FiZikTKYrSJ586U7Zjqc5FYzVA7UlKmkk7CoYy1uN2xvAncqhrTO7gHzYjqWRhuvo2W-difOdohjlAZuXpQe3CT9GOgNrZ5sjTr0wMx1v9fsWIrhKo4h4Hlv5O_GUtOrJtk2sbVwqxeTQPFWSmlA24QbIlQ7rinp2qbfKE2v-CLfoqx4YqZbDz00zYds_6wLO29Av0FPgdyDCatUjWSdrg"
-              alt="Hawa Mahal Jaipur"
+              alt="Hawa Mahal in Jaipur Rajasthan"
+              loading="lazy"
+              decoding="async"
+              width="800"
+              height="600"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 scrim-bottom" />
@@ -113,11 +109,16 @@ export const HomePage = () => {
           {/* Secondary Story: Kerala (4 Cols) */}
           <Link
             to="/explore"
+            aria-label="Explore Kerala, South India"
             className="group md:col-span-4 relative aspect-[4/5] md:aspect-auto md:h-full overflow-hidden rounded bg-[#F0EDED] image-zoom block shadow-sm"
           >
             <img
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmLiP1MI_0kZ4mqRddpYohwseVObNOmBXIomVMBJHHlTkp3huLixkICs6bjDDWkSU8tWe4squdP2XlQZVTK4BZ0CgFCKp2gTxF7W_6I9W0XnpF36dBAS2CSaSnx1G3zaM3YTKQ2UNggESsg259w_wXmrUAgLgo8V23LhyDci9dyf1ddwHnp1RqH7s4yfNQ87TId9BIpE2bqJHPdgmjQyhpK13Kv1e85f4IV_vhbK_4NAkATSJWfJUohg"
-              alt="Kerala Backwaters"
+              alt="Kerala Backwaters and palm-lined lagoons"
+              loading="lazy"
+              decoding="async"
+              width="400"
+              height="500"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 scrim-bottom" />
@@ -134,11 +135,16 @@ export const HomePage = () => {
           {/* Smaller Story 1: Manali (4 Cols) */}
           <Link
             to="/explore"
+            aria-label="Explore Manali, Himachal Pradesh"
             className="group md:col-span-4 relative aspect-[4/5] overflow-hidden rounded bg-[#F0EDED] image-zoom block shadow-sm"
           >
             <img
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuD89wvqOvWjPYWb1rW_z5hAf4_HERisEb-L-7tiX1n_RMEMO3hjubz5Db8Wv3f3rBAEuPsi3u7BLU7kH4KkeqqE0VA4b5iFa6sy2O_d3cgJ4nhYZGWkSJogx8rpONtV0M37kxuCa9wYpL-biOR7wXOOcJIsQKa9DnJ9q-Uwz--1UqRPcI8A5_1qA8xATZK36xc9cpWBqA5-_VpmtDKzLb0MyYdUOLvyuVGcv--gtT4tdhjXZaaovjJt0Q"
-              alt="Himalayan Mountain Peaks Manali"
+              alt="Himalayan Mountain Peaks in Manali"
+              loading="lazy"
+              decoding="async"
+              width="400"
+              height="500"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 scrim-bottom" />
@@ -155,11 +161,16 @@ export const HomePage = () => {
           {/* Smaller Story 2: Varanasi (4 Cols) */}
           <Link
             to="/explore"
+            aria-label="Explore Varanasi, Uttar Pradesh"
             className="group md:col-span-4 relative aspect-[4/5] overflow-hidden rounded bg-[#F0EDED] image-zoom block shadow-sm"
           >
             <img
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIUJ26Od1PImTs6kEQDwDQOgafSmPqExlb_2AQiqfBwKO0xEgb9GL1Bg_VuOzBEPiZAjoCpuhG9rom8ncgREzWNahiQuzhYltUdTzj4WOts3WxWozt4o3ipY5z04JSMHP0mX_DgHuLr5QIx9SuBSvPGsLaM-Ib27g3rW45Tumef_it2FKa5xbLE-RptWVm-SOQFc841LBzEsEkrwDgL5XVlLc532PERgcbTulos0Kn93hPXzeFh2TXYg"
-              alt="Ganges Ghats Sunset Varanasi"
+              alt="Ganges Ghats Sunset in Varanasi"
+              loading="lazy"
+              decoding="async"
+              width="400"
+              height="500"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 scrim-bottom" />
@@ -176,11 +187,16 @@ export const HomePage = () => {
           {/* Smaller Story 3: Goa (4 Cols) */}
           <Link
             to="/explore"
+            aria-label="Explore Goa, West Coast"
             className="group md:col-span-4 relative aspect-[4/5] overflow-hidden rounded bg-[#F0EDED] image-zoom block shadow-sm"
           >
             <img
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmiXfQ14OuWTiO4NrMPZltrKS2oQb-QLu-nt00xw0fammXH5j91_B1SnMRzzqqKnJxNl_ipvkDYxDA7kWdRfEUokmq6TmnZvt8S42GyNF1i5slVRGARrX-IVbrvlF9Mql_qWA1g8SzLicKa39rx2hqf5NH2Ib9hg04pEjwPCxbuprt34zZPSa2cbGxUQMefv3EPOPPdPMbKst_YqBW7rDwpkP7TAjJjZIq6_qy5C3ivTtfHfCk_g7dxA"
-              alt="Portuguese Heritage Villa Goa"
+              alt="Portuguese Heritage Architecture in Goa"
+              loading="lazy"
+              decoding="async"
+              width="400"
+              height="500"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 scrim-bottom" />
@@ -203,39 +219,48 @@ export const HomePage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16">
             <div className="group text-center space-y-4">
-              <h3 className="font-serif text-6xl font-light text-[#877369]/40 group-hover:text-[#6C2F00] transition-colors duration-500">
+              <p
+                aria-hidden="true"
+                className="font-serif text-6xl font-light text-[#877369]/60 group-hover:text-[#6C2F00] transition-colors duration-500"
+              >
                 01
-              </h3>
-              <h4 className="font-serif text-2xl font-bold text-[#1C1B1B]">
+              </p>
+              <h3 className="font-serif text-2xl font-bold text-[#1C1B1B]">
                 Discover
-              </h4>
-              <p className="text-xs sm:text-sm text-[#54433A] max-w-xs mx-auto leading-relaxed">
+              </h3>
+              <p className="text-xs sm:text-sm text-[#3E312A] max-w-xs mx-auto leading-relaxed">
                 Explore carefully curated destinations worth visiting that
                 inspire your next journey across the subcontinent.
               </p>
             </div>
 
             <div className="group text-center space-y-4">
-              <h3 className="font-serif text-6xl font-light text-[#877369]/40 group-hover:text-[#6C2F00] transition-colors duration-500">
+              <p
+                aria-hidden="true"
+                className="font-serif text-6xl font-light text-[#877369]/60 group-hover:text-[#6C2F00] transition-colors duration-500"
+              >
                 02
-              </h3>
-              <h4 className="font-serif text-2xl font-bold text-[#1C1B1B]">
+              </p>
+              <h3 className="font-serif text-2xl font-bold text-[#1C1B1B]">
                 Plan
-              </h4>
-              <p className="text-xs sm:text-sm text-[#54433A] max-w-xs mx-auto leading-relaxed">
+              </h3>
+              <p className="text-xs sm:text-sm text-[#3E312A] max-w-xs mx-auto leading-relaxed">
                 Turn raw inspiration into your own structured, actionable
                 itinerary seamlessly with live attraction details.
               </p>
             </div>
 
             <div className="group text-center space-y-4">
-              <h3 className="font-serif text-6xl font-light text-[#877369]/40 group-hover:text-[#6C2F00] transition-colors duration-500">
+              <p
+                aria-hidden="true"
+                className="font-serif text-6xl font-light text-[#877369]/60 group-hover:text-[#6C2F00] transition-colors duration-500"
+              >
                 03
-              </h3>
-              <h4 className="font-serif text-2xl font-bold text-[#1C1B1B]">
+              </p>
+              <h3 className="font-serif text-2xl font-bold text-[#1C1B1B]">
                 Organize
-              </h4>
-              <p className="text-xs sm:text-sm text-[#54433A] max-w-xs mx-auto leading-relaxed">
+              </h3>
+              <p className="text-xs sm:text-sm text-[#3E312A] max-w-xs mx-auto leading-relaxed">
                 Keep your journey, budget records, weather forecasts, and
                 packing checklists together in one sanctuary.
               </p>
@@ -256,7 +281,7 @@ export const HomePage = () => {
           <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#1C1B1B] mb-4">
             How it works
           </h2>
-          <p className="text-sm sm:text-base text-[#54433A]">
+          <p className="text-sm sm:text-base text-[#3E312A]">
             A simple, intentional process to take you from dreaming to
             experiencing.
           </p>
@@ -267,13 +292,13 @@ export const HomePage = () => {
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-24">
             <div className="w-full lg:w-1/2 order-2 lg:order-1">
               <div className="max-w-md ml-auto space-y-4">
-                <span className="text-xs font-semibold uppercase tracking-widest text-[#877369]">
+                <span className="text-xs font-semibold uppercase tracking-widest text-[#6C2F00]">
                   01
                 </span>
                 <h3 className="font-serif text-3xl sm:text-4xl font-bold text-[#1C1B1B]">
                   Discover
                 </h3>
-                <p className="text-xs sm:text-sm text-[#54433A] leading-relaxed">
+                <p className="text-xs sm:text-sm text-[#3E312A] leading-relaxed">
                   Browse our editorial collections to find destinations that
                   resonate with your travel style. Immerse yourself in
                   high-quality visual stories and local guidance.
@@ -285,6 +310,10 @@ export const HomePage = () => {
                 <img
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuGLX51M6zk-3IyVl6jlS1BceAaSsqQwVj_63yO22EUKN1FlAtHk9zPHkisIBF4YTxxtHyVBI4dDdgnyfeHHfvfNJizxVkk-LW95pc72tNXKZ3X19o88RtAYDz4Q5GbQWEJsKDebcoz1AlrnBcU07RnyFe-UMZg33OjcJp6K5ud6PLwDMwJxm6nG0DnChyYRvw2n8v35TlITyYv2pkTxDm0uQ2gdS5UBWxYA_jLTAM7DwkSJQo6LUOYA"
                   alt="Discovering destinations digitally"
+                  loading="lazy"
+                  decoding="async"
+                  width="600"
+                  height="450"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -298,19 +327,23 @@ export const HomePage = () => {
                 <img
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3R8ShNgEmS5ECeXeRuNpYnlY5WjIsErRl3FOYlDR6rGiSlyhx4IebROuCyg5pvH5c-Cv-NmSHk-J5LstQ-muebIOZvJNRuD8_OJwX17hoMLgRHrVkj7kakUnKB-2tKfbI9YvW2r9MpwHAb2Aft2kJ6iibmrZO1q0t755_Uaf6fV2seNhuvgBEzafSMGdlZYWa3UepzdosPBXbOiqa2oiQsf_MNPZe5kBQxg75Pw3ZjTmsYLiG-C2ISQ"
                   alt="Planning a mindful travel itinerary"
+                  loading="lazy"
+                  decoding="async"
+                  width="600"
+                  height="450"
                   className="w-full h-full object-cover"
                 />
               </div>
             </div>
             <div className="w-full lg:w-1/2">
               <div className="max-w-md space-y-4">
-                <span className="text-xs font-semibold uppercase tracking-widest text-[#877369]">
+                <span className="text-xs font-semibold uppercase tracking-widest text-[#6C2F00]">
                   02
                 </span>
                 <h3 className="font-serif text-3xl sm:text-4xl font-bold text-[#1C1B1B]">
                   Plan
                 </h3>
-                <p className="text-xs sm:text-sm text-[#54433A] leading-relaxed">
+                <p className="text-xs sm:text-sm text-[#3E312A] leading-relaxed">
                   Select the places you want to visit and build a structured,
                   elegant itinerary. Organize your transit, accommodation, and
                   daily activities effortlessly.
@@ -323,13 +356,13 @@ export const HomePage = () => {
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-24">
             <div className="w-full lg:w-1/2 order-2 lg:order-1">
               <div className="max-w-md ml-auto space-y-4">
-                <span className="text-xs font-semibold uppercase tracking-widest text-[#877369]">
+                <span className="text-xs font-semibold uppercase tracking-widest text-[#6C2F00]">
                   03
                 </span>
                 <h3 className="font-serif text-3xl sm:text-4xl font-bold text-[#1C1B1B]">
                   Travel
                 </h3>
-                <p className="text-xs sm:text-sm text-[#54433A] leading-relaxed">
+                <p className="text-xs sm:text-sm text-[#3E312A] leading-relaxed">
                   Access your entire plan on the go, with a clutter-free view of
                   your journey. Use language translation and live weather
                   updates to focus on experiencing the moment.
@@ -341,6 +374,10 @@ export const HomePage = () => {
                 <img
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpL_bYcg97s4NIhELB79rPvWJ5aRdMvXWHK0kSyY77K5BCz2Uc88wlQFv96sEF76yIQrqmg1IjciBvnChDVrOGjfsIvve0vYswyxAC5OqGvTHk-iQptI2RQDE3rPrU2swBl3F-pYSSoXGsRQ1RilAAwYGCiAEeGvf67aAnfQ2SzJ551p3EUdDrfK6RDtCcwHdb-kN3jnAKNQOIXxtNNctzT6DZayssn4hjJWt02kjqbE8HwB1pIejYVg"
                   alt="Solitary traveler in the mountains"
+                  loading="lazy"
+                  decoding="async"
+                  width="600"
+                  height="450"
                   className="w-full h-full object-cover"
                 />
               </div>
