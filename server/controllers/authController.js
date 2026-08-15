@@ -12,6 +12,7 @@ const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Register a new user
+// Register a new user & immediately issue JWT token for seamless instant login
 exports.register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
@@ -21,66 +22,69 @@ exports.register = async (req, res, next) => {
       typeof email !== "string" ||
       typeof password !== "string"
     ) {
-      return res.status(400).json({ msg: "Please provide all fields" });
+      return res
+        .status(400)
+        .json({ msg: "Please provide all required fields." });
     }
 
-    if (!/^[A-Za-z\s]+$/.test(name) || name.trim().length < 2) {
+    if (!/^[A-Za-z\s]+$/.test(name.trim()) || name.trim().length < 2) {
       return res.status(400).json({
-        msg: "Name must be at least 2 characters and contain only letters",
+        msg: "Name must be at least 2 characters and contain only letters.",
       });
     }
 
-    // RFC 5322 email pre-validation: reject leading dots and malformed structures before DB queries
+    // RFC 5322 email pre-validation
     if (
-      !/^[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)
+      !/^[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+        email.trim(),
+      )
     ) {
-      return res.status(400).json({ msg: "Please enter a valid email" });
+      return res
+        .status(400)
+        .json({ msg: "Please enter a valid email address." });
     }
 
-    // Enforce strong password complexity rules at the controller level (atleast 8 characters and atleast contain 1 uppercase, 1 lowercase, 1 number, and 1 special character)
+    // Password complexity: min 8 chars with 1 uppercase, 1 lowercase, 1 number & 1 special char
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
     if (!passwordRegex.test(password)) {
       return res.status(400).json({
-        msg: "Password must be at least 8 characters and atleast contain 1 uppercase, 1 lowercase, 1 number, and 1 special character",
+        msg: "Password must be at least 8 characters and contain at least 1 uppercase, 1 lowercase, 1 number, and 1 special character.",
       });
     }
 
+    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedName = name.trim().replace(/\s+/g, " ");
+
     // Check if user already exists
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ email: normalizedEmail });
     if (user) {
-      return res.status(400).json({ msg: "User already exists" });
+      return res.status(400).json({
+        msg: "An account with this email already exists. Please log in directly.",
+      });
     }
 
-    // Create new user with normalized single-spaced name
+    // Create user with verified status for friction-free access
     user = new User({
-      name: name.trim().replace(/\s+/g, " "),
-      email,
+      name: normalizedName,
+      email: normalizedEmail,
       password,
+      isVerified: true,
+      authProvider: "local",
     });
 
-    // await user.save();
-    // Generate verification token
-    const verificationToken = user.getEmailVerificationToken();
-    console.log("Verification Token:", verificationToken);
-
-    // Save user with verification token
     await user.save();
 
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
-
-    const verifyUrl = `${frontendUrl}/verify-email/${verificationToken}`;
-
-    // Send verification email
-    await sendEmail({
-      email: user.email,
-      subject: "Verify Your Email",
-      message: `Please verify your email by clicking the following link: ${verifyUrl}`,
+    // Generate JWT token directly
+    const payload = { user: { id: user.id } };
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "7d",
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
-      email: user.email,
-      msg: "Account created successfully. Please login.",
+      token,
+      user: { id: user.id, name: user.name, email: user.email },
+      msg: "Account created successfully!",
     });
   } catch (err) {
     next(err);
@@ -93,23 +97,33 @@ exports.login = async (req, res, next) => {
     const { email, password } = req.body;
 
     if (typeof email !== "string" || typeof password !== "string") {
-      return res.status(400).json({ msg: "Please provide email and password" });
+      return res
+        .status(400)
+        .json({ msg: "Please provide email and password." });
     }
 
-    // RFC 5322 email pre-validation for login attempts
+    // RFC 5322 email validation
     if (
-      !/^[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)
+      !/^[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+        email.trim(),
+      )
     ) {
-      return res.status(400).json({ msg: "Please enter a valid email" });
+      return res
+        .status(400)
+        .json({ msg: "Please enter a valid email address." });
     }
+
+    const normalizedEmail = email.trim().toLowerCase();
 
     // Check if user exists
-    let user = await User.findOne({ email }).select("+password");
+    let user = await User.findOne({ email: normalizedEmail }).select(
+      "+password",
+    );
     if (!user) {
-      return res.status(400).json({ msg: "Invalid credentials" });
+      return res.status(400).json({ msg: "Invalid email or password." });
     }
 
-    // Check password (upgrade legacy plaintext hashes on successful login)
+    // Check password
     let isMatch;
     try {
       isMatch = await user.verifyPassword(password, { upgradeLegacy: true });
@@ -117,22 +131,17 @@ exports.login = async (req, res, next) => {
       return next(err);
     }
     if (!isMatch) {
-      return res.status(400).json({ msg: "Invalid credentials" });
-    }
-    //prevents unverified user
-    if (!user.isVerified) {
-      return res.status(403).json({
-        success: false,
-        msg: "Please verify your email before logging in.",
-      });
+      return res.status(400).json({ msg: "Invalid email or password." });
     }
 
     // Create JWT token
     const payload = { user: { id: user.id } };
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "5d",
+      expiresIn: "7d",
     });
+
     res.json({
+      success: true,
       token,
       user: { id: user.id, name: user.name, email: user.email },
     });
