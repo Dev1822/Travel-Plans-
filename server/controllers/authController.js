@@ -327,15 +327,13 @@ exports.forgotPassword = async (req, res, next) => {
     const resetToken = user.getResetPasswordToken();
     await user.save({ validateBeforeSave: false });
 
-    // Create reset url
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    // Determine frontend URL (from env or request origin or fallback to live deployed URL)
+    const frontendUrl =
+      process.env.FRONTEND_URL ||
+      (req.headers.origin && req.headers.origin.startsWith("http")
+        ? req.headers.origin
+        : "https://travel-plans-phi.vercel.app");
     const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
-
-    console.log("\n=======================================================");
-    console.log("🚀 PASSWORD RESET LINK GENERATED");
-    console.log(`User: ${user.email}`);
-    console.log(`Reset URL: ${resetUrl}`);
-    console.log("=======================================================\n");
 
     const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please visit the following link to reset your password:\n\n${resetUrl}\n\nThis link will expire in 10 minutes.`;
 
@@ -352,24 +350,15 @@ exports.forgotPassword = async (req, res, next) => {
         msg: "Password reset link sent to your email successfully.",
       });
     } catch (err) {
-      console.warn("[forgotPassword] Email dispatch failed:", err.message);
+      console.error("[forgotPassword] Email dispatch failed:", err.message);
 
-      // In development or when SMTP is offline, keep the token active so developers can reset via terminal link
-      if (process.env.NODE_ENV !== "production") {
-        return res.status(200).json({
-          success: true,
-          msg: "Password reset link generated! (Check server console for reset URL in dev mode).",
-          resetUrl,
-        });
-      }
-
-      // In production, clear token if email delivery failed
+      // Invalidate the token since email could not be delivered
       user.resetPasswordToken = undefined;
       user.resetPasswordExpire = undefined;
       await user.save({ validateBeforeSave: false });
 
       return res.status(500).json({
-        msg: "Email could not be sent. Please check your SMTP configuration.",
+        msg: "Failed to send reset email. Please check your SMTP configuration or try again later.",
       });
     }
   } catch (err) {
@@ -380,34 +369,58 @@ exports.forgotPassword = async (req, res, next) => {
 // Reset Password
 exports.resetPassword = async (req, res, next) => {
   try {
+    const { password } = req.body;
+    const rawToken = req.params.token;
+
+    if (!rawToken || typeof rawToken !== "string") {
+      return res.status(400).json({ msg: "Invalid or missing reset token." });
+    }
+
+    if (!password || typeof password !== "string") {
+      return res.status(400).json({ msg: "Please provide a new password." });
+    }
+
+    // Password complexity check: min 8 chars with 1 uppercase, 1 lowercase, 1 number & 1 special char
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        msg: "Password must be at least 8 characters and contain at least 1 uppercase, 1 lowercase, 1 number, and 1 special character.",
+      });
+    }
+
     // Get hashed token (trim token to handle copy-paste whitespace/newlines)
     const resetPasswordToken = crypto
       .createHash("sha256")
-      .update(req.params.token.trim())
+      .update(rawToken.trim())
       .digest("hex");
 
-    const user = await User.findOne({
-      resetPasswordToken,
-      resetPasswordExpire: { $gt: new Date() },
-    }).select("+password");
+    const user = await User.findOne({ resetPasswordToken }).select("+password");
 
-    if (!user) {
-      return res.status(400).json({ msg: "Invalid token" });
+    if (
+      !user ||
+      !user.resetPasswordExpire ||
+      new Date(user.resetPasswordExpire).getTime() < Date.now()
+    ) {
+      return res.status(400).json({
+        msg: "Password reset link is invalid or has expired. Please request a new one.",
+      });
     }
 
     // Set new password
-    user.password = req.body.password;
+    user.password = password;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
     await user.save();
 
-    // Create JWT token and log user in automatically (optional)
+    // Create JWT token and log user in automatically
     const payload = { user: { id: user.id } };
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "5d",
+      expiresIn: "7d",
     });
-    res.json({
-      msg: "Password reset successful",
+
+    return res.json({
+      success: true,
+      msg: "Password reset successful! You can now log in.",
       token,
       user: { id: user.id, name: user.name, email: user.email },
     });
@@ -499,13 +512,6 @@ exports.requestEmailChange = async (req, res, next) => {
     currentUser.tempEmail = email;
     await currentUser.save();
 
-    // Log OTP for local development
-    console.log("\n=======================================================");
-    console.log("🚀 DEV MODE: EMAIL CHANGE OTP GENERATED");
-    console.log(`New Email: ${email}`);
-    console.log(`OTP Code: ${otp}`);
-    console.log("=======================================================\n");
-
     // Send Email
     try {
       await sendEmail({
@@ -519,18 +525,16 @@ exports.requestEmailChange = async (req, res, next) => {
         ),
       });
     } catch (emailErr) {
-      console.warn(
+      console.error(
         "[authController] Email change OTP dispatch failed:",
         emailErr.message,
       );
-      if (process.env.NODE_ENV === "production") {
-        return res.status(500).json({
-          msg: "Failed to send email verification code. Please try again later.",
-        });
-      }
+      return res.status(500).json({
+        msg: "Failed to send email verification code. Please try again later.",
+      });
     }
 
-    res.json({
+    return res.json({
       success: true,
       msg: "A verification code has been sent to your new email address.",
     });
