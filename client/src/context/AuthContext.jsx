@@ -5,7 +5,6 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { jwtDecode } from "jwt-decode";
 import { authApi } from "../services/api/authApi";
 import { getErrorMessage } from "../services/api/client";
 
@@ -100,35 +99,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   const googleLogin = async (credential) => {
-    try {
-      // Attempt backend authentication
-      const res = await authApi.googleAuth(credential);
-      if (res.data?.token && res.data?.user) {
-        setAuthData(res.data.token, res.data.user);
-        return res.data;
-      }
-    } catch (err) {
-      console.warn("Backend /auth/google fallback:", err?.message);
+    const res = await authApi.googleAuth(credential);
+    if (res.data?.token && res.data?.user) {
+      setAuthData(res.data.token, res.data.user);
+      return res.data;
     }
-
-    // Decode Google ID Token payload directly
-    try {
-      const decoded = jwtDecode(credential);
-      const googleUser = {
-        id: decoded.sub,
-        _id: decoded.sub,
-        name: decoded.name || decoded.given_name || "Google Traveler",
-        email: decoded.email,
-        picture: decoded.picture,
-        isVerified: decoded.email_verified || true,
-        authProvider: "google",
-      };
-      setAuthData(credential, googleUser);
-      return { token: credential, user: googleUser };
-    } catch (decodeErr) {
-      console.error("JWT Decode error:", decodeErr);
-      throw new Error("Could not parse Google credentials.");
-    }
+    throw new Error("Invalid response from authentication server.");
   };
 
   const register = async (name, email, password) => {
