@@ -1,175 +1,178 @@
 # Contributing to PackGo (Travel Planner)
 
-Thank you for your interest in contributing to PackGo! We welcome contributions from everyone during GSSoC 2026.
+Thank you for your interest in contributing to PackGo! We welcome contributions from everyone during GSSoC and the open-source community.
 
 ---
 
-## ⚠️ GSSoC 2026 Rules
+## 🎯 Contribution Scope & Issue Creation Guidelines
 
-- Only work on **assigned issues** — comment and wait for assignment before starting
-- **No trivial changes** — whitespace, typo fixes in comments, or cosmetic README changes are not accepted
-- **Respond to reviews within 48 hours** or PR may be closed
-- Read full contributor guidelines: [GSSoC Contributor Guidelines](https://gssoc.girlscript.org/guidelines/contributor)
+> [!IMPORTANT]
+> **Please read these rules carefully before opening an issue or Pull Request.**
+
+### 1. Focus on Existing Features & Bug Fixes Only
+
+- **Do NOT propose completely new features** or implementations that alter the scope of this project.
+- **Find and fix bugs**, improve performance, resolve edge-cases, enhance responsiveness, or refine existing UI/UX elements.
+- Ensure any proposed changes align directly with the existing architecture and design system.
+
+### 2. Mandatory UI Mockups for UI/UX Issues
+
+- If you are opening an issue related to **UI/UX improvements**, you **MUST attach a clear UI Mockup, Figma/design reference, screenshot, or video** illustrating your proposed change.
+- **Issues without UI mockups / visual references will NOT be assigned.**
+- The proposed improvement must be crystal clear to the maintainer/admin before work begins.
+
+---
+
+## ⚠️ Contributor Rules
+
+- Only work on **assigned issues** — comment on the issue and wait for formal assignment before starting.
+- **No trivial changes** — whitespace modifications, typo fixes in code comments, or cosmetic README tweaks will not be accepted.
+- **Respond to PR reviews within 48 hours**, or the PR may be closed/reassigned.
+- **Never commit directly to `main`** — always create a dedicated feature branch on your fork.
 
 ---
 
 ## 🤖 AI Conduct
 
-- You **may use AI tools** (Copilot, ChatGPT) to understand concepts or debug
-- You **must fully understand** every line you submit — reviewers will ask questions
-- **Cite AI assistance** in your PR description if AI substantially helped
-- **No copy-paste** of AI output without review and testing
-- **No AI-generated** issue comments or maintainer communication
+- You **may use AI tools** (Copilot, ChatGPT, Claude) to understand concepts or debug code.
+- You **must fully understand** every line you submit — reviewers will ask technical questions.
+- **Cite AI assistance** in your PR description if AI substantially helped.
+- **No unverified copy-pasting** of AI output without manual testing.
+- **No AI-generated bot comments** on issues or PRs.
 
 ---
 
-## Contribution Workflow
+## 🚀 Contribution Workflow
 
-1. **Fork the repository** to your own GitHub account
+1. **Fork the repository** to your GitHub account.
 2. **Clone your fork** locally:
-
-```bash
-   git clone https://github.com/your-username/Travel-Plans-.git
-```
-
-3. **Create a feature branch** — never commit to `main`:
-
-```bash
-   git checkout -b feat/your-feature-name
-   # or
+   ```bash
+   git clone https://github.com/<your-username>/Travel-Plans-.git
+   cd Travel-Plans-
+   ```
+3. **Sync with upstream `main`**:
+   ```bash
+   git remote add upstream https://github.com/hitesh-kumar123/Travel-Plans-.git
+   git fetch upstream
+   git checkout main
+   git merge upstream/main
+   ```
+4. **Create a feature branch**:
+   ```bash
    git checkout -b fix/your-bug-fix
-```
-
-4. **Make your changes** following code style guidelines
-5. **Test your changes** locally before submitting
-6. **Commit your changes** using Conventional Commits format
-7. **Push your branch**:
-
-```bash
-   git push origin feat/your-feature-name
-```
-
-8. **Open a Pull Request** against the `main` branch
-
----
-
-## Syncing Upstream Changes
-
-Keep your fork up-to-date with the main repository:
-
-```bash
-git remote add upstream https://github.com/hitesh-kumar123/Travel-Plans-.git
-git fetch upstream
-git checkout main
-git merge upstream/main
-git push origin main
-```
-
-> ⚠️ **Never commit directly to your `main` branch** — always create a new branch for your changes!
+   # or
+   git checkout -b improve/your-ui-improvement
+   ```
+5. **Make your changes** following code style guidelines.
+6. **Test your changes** locally before submitting.
+7. **Commit your changes** using Conventional Commits format:
+   ```bash
+   git commit -m "fix(trips): resolve date picker range error on safari"
+   ```
+8. **Push your branch & open a Pull Request**:
+   ```bash
+   git push origin fix/your-bug-fix
+   ```
 
 ---
 
-## Local Environment Setup
+## 💻 Local Environment Setup
 
-### Server Setup
+### 1. Server Setup (`/server`)
 
 ```bash
 cd server
-cp .env.example .env
+npm install
 ```
 
-### 📧 Setting Up Gmail App Password (for OTP emails)
-
-> **Note:** Production server uses its own credentials. For local development, use your own Gmail App Password. Never commit credentials!
-
-1. Go to [Google Account](https://myaccount.google.com)
-2. **Security → 2-Step Verification** → Enable it
-3. **Security → App passwords** → Select Mail → Other → type `PackGo`
-4. Copy the 16-character password
-5. Paste in `server/.env`:
+Create a `.env` file in the `server/` directory:
 
 ```env
-EMAIL_USER=your-gmail@gmail.com
-EMAIL_PASS=xxxx xxxx xxxx xxxx
+PORT=5000
+MONGO_URI=mongodb://127.0.0.1:27017/traveldb
+JWT_SECRET=your_secret_key_here
+FRONTEND_URL=http://localhost:5173
 ```
 
-📖 [Official Guide](https://support.google.com/accounts/answer/185833)
+Start the backend:
 
-### Client Setup
+```bash
+npm run dev
+```
+
+### 2. Client Setup (`/client`)
 
 ```bash
 cd client
-cp .env.example .env
+npm install
 ```
 
-Default `REACT_APP_API_URL=http://localhost:5000/api` works for local development ✅
+Create a `.env` file in the `client/` directory:
 
----
+```env
+VITE_API_URL=http://localhost:5000/api
+VITE_GOOGLE_CLIENT_ID=your_google_client_id_here
+VITE_FRANKFURTER_API_URL=https://api.frankfurter.dev/v1
+```
 
-## Pull Request Requirements
-
-- Clear and descriptive PR title
-- Fill out the PR Template completely
-- Link issues using: `Closes #123` or `Fixes #123`
-- UI changes **must include** before/after screenshots
-
----
-
-## Commit Message Conventions
-
-We use [Conventional Commits](https://www.conventionalcommits.org/):
-
-| Prefix      | Use for               |
-| ----------- | --------------------- |
-| `feat:`     | New feature           |
-| `fix:`      | Bug fix               |
-| `docs:`     | Documentation changes |
-| `refactor:` | Code restructuring    |
-| `style:`    | Formatting only       |
-| `test:`     | Adding/fixing tests   |
-| `chore:`    | Build process changes |
-
-Example: `feat: add Google authentication to login page`
-
----
-
-## Code Style Rules
-
-- **ESLint** and **Prettier** enforced
-- Variables and functions → `camelCase`
-- React components → `PascalCase`
-- Clean, modular file organization
-
----
-
-## Testing Expectations
-
-Before submitting PR:
+Start the frontend:
 
 ```bash
-npm run lint          # Check ESLint errors
-npm run format:check  # Check Prettier formatting
-npm run build         # Ensure project builds (in client/)
+npm run dev
 ```
-
-- No console errors or warnings when running locally ✅
 
 ---
 
-## Review Expectations
+## 📋 Pull Request Requirements
 
-- **Review Timeline:** 24–48 hours
-- Be responsive to feedback
-- Complex PRs may require explanation of implementation
+- Clear, descriptive PR title adhering to Conventional Commits.
+- Fill out the PR Template completely.
+- Reference the linked issue: `Fixes #123` or `Closes #123`.
+- **UI changes MUST include Before / After screenshots or video recordings.**
+- Ensure all automated checks pass.
+
+---
+
+## 🧪 Testing & Validation
+
+Before submitting your PR, run the automated checks locally:
+
+```bash
+# In client/
+npm run lint
+npm run build
+
+# In server/
+npm run lint
+npm run format:check
+
+# In root /
+npm run format:check
+```
+
+- Ensure there are no console errors or warnings when testing locally ✅.
+
+---
+
+## 📝 Commit Message Conventions
+
+We follow [Conventional Commits](https://www.conventionalcommits.org/):
+
+| Prefix      | Purpose                                   | Example                                              |
+| ----------- | ----------------------------------------- | ---------------------------------------------------- |
+| `fix:`      | Bug fix                                   | `fix(auth): resolve token refresh loop`              |
+| `feat:`     | Approved enhancement to existing feature  | `feat(destinations): add state filter to search`     |
+| `style:`    | UI/UX styling or CSS polish               | `style(navbar): improve mobile drawer touch targets` |
+| `docs:`     | Documentation update                      | `docs: update contributing issue guidelines`         |
+| `refactor:` | Code restructuring without feature change | `refactor(trips): modularize expense calculations`   |
+| `test:`     | Adding or fixing test cases               | `test(auth): add unit test for password validation`  |
 
 ---
 
 ## 🌱 Beginner Contributor Guidance
 
-1. Look for `good first issue` labeled issues
-2. Comment on issue asking to be assigned — **wait for assignment**
-3. Ask questions in the issue thread — we are here to help!
+1. Look for issues labeled [`good first issue`](../../issues?q=label%3A%22good+first+issue%22).
+2. Comment on the issue asking to be assigned along with your implementation plan / UI mockup.
+3. Wait for the maintainer to assign the issue to you before submitting code.
 
----
-
-Thank you for contributing to PackGo!
+Thank you for helping make **PackGo** better! 🌟

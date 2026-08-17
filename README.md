@@ -694,16 +694,6 @@ See the [LICENSE](LICENSE) file for full details.
 
 ---
 
-## 👥 Mentors
-
-We are incredibly grateful to our mentors for their valuable support and code reviews:
-
-- **Mrigakshi Rathore** — GSSoC'26 Mentor
-  - [![GitHub](https://img.shields.io/badge/GitHub-Mrigakshi--Rathore-181717?style=flat&logo=github)](https://github.com/Mrigakshi-Rathore)
-  - [![LinkedIn](https://img.shields.io/badge/LinkedIn-Mrigakshi--Rathore-0A66C2?style=flat&logo=linkedin)](https://www.linkedin.com/in/mrigakshi-rathore/)
-
----
-
 ## 👤 Author
 
 <div align="center">
